@@ -35,10 +35,10 @@ const services = [
 function Choice({ group, value, label, description }: { group: string; value: string; label: string; description?: string }) {
   const id = `${group}-${value}`.toLowerCase().replace(/[^a-z0-9]+/g, "-");
   return (
-    <Label htmlFor={id} className="group flex min-h-16 cursor-pointer items-center justify-between gap-5 border-b border-[#ddd8cf] py-4 font-normal transition hover:border-[#7b8794] has-[[data-state=checked]]:border-[#b5122b]">
+    <Label htmlFor={id} className="group flex min-h-12 cursor-pointer items-center justify-between gap-4 rounded-2xl border border-[#ddd8cf] bg-white/55 px-4 py-3 font-normal transition hover:border-[#7b8794] hover:bg-white has-[[data-state=checked]]:border-[#b5122b] has-[[data-state=checked]]:bg-[#fff7f7]">
       <span>
-        <span className="block text-[17px] font-semibold tracking-[-.02em] text-[#1d2731]">{label}</span>
-        {description && <span className="mt-1 block max-w-xl text-sm leading-6 text-[#6d7781]">{description}</span>}
+        <span className="block text-[15px] font-semibold tracking-[-.02em] text-[#1d2731]">{label}</span>
+        {description && <span className="mt-0.5 block max-w-xl text-xs leading-5 text-[#6d7781]">{description}</span>}
       </span>
       <RadioGroupItem id={id} value={value} className="size-5 shrink-0 border-[#a7adb4] data-[state=checked]:border-[#b5122b] data-[state=checked]:text-[#b5122b]" />
     </Label>
@@ -71,7 +71,7 @@ export default function RegisterPage() {
       { key: "gender", section: "Personal information", kicker: "About you", title: "How would you describe your gender?" },
       { key: "age", section: "Personal information", kicker: "About you", title: "How old are you?" },
       { key: "phone", section: "Personal information", kicker: "Contact details", title: "What phone number can we use for this registration?" },
-      { key: "email", section: "Personal information", kicker: "Contact details", title: "What is your email address?", help: "Email is optional. Your registration number and private lookup code will still appear after submission.", optional: true },
+      { key: "email", section: "Personal information", kicker: "Contact details", title: "What is your email address?", help: "We will send your registration number and private lookup code to this address." },
       { key: "department", section: "Employment", kicker: "Your work", title: "Which department do you work in?" },
     ];
     if (data.department === "Others") list.push({ key: "otherDepartment", section: "Employment", kicker: "Your work", title: "Please tell us your department." });
@@ -104,7 +104,7 @@ export default function RegisterPage() {
       case "gender": return !data.gender ? "Select one option." : "";
       case "age": return !data.age || Number(data.age) < 16 || Number(data.age) > 100 ? "Enter an age between 16 and 100." : "";
       case "phone": return data.phone.replace(/\D/g, "").length < 10 ? "Enter a valid phone number." : "";
-      case "email": return data.email && !/^\S+@\S+\.\S+$/.test(data.email) ? "Enter a valid email address or leave it blank." : "";
+      case "email": return !/^\S+@\S+\.\S+$/.test(data.email) ? "Enter a valid email address." : "";
       case "department": return !data.department ? "Select your department." : "";
       case "otherDepartment": return data.otherDepartment.trim().length < 2 ? "Enter your department." : "";
       case "otherCondition": return data.otherCondition.trim().length < 2 ? "Enter the condition." : "";
@@ -153,18 +153,18 @@ export default function RegisterPage() {
       case "email": return <Input autoFocus type="email" value={data.email} onChange={(e) => update("email", e.target.value)} placeholder="name@example.com" autoComplete="email" className="h-16 border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-2xl shadow-none focus-visible:ring-0" />;
       case "department": return <Select value={data.department} onValueChange={(v) => { update("department", v); if (v !== "Others") update("otherDepartment", ""); }}><SelectTrigger className="h-16 border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-lg shadow-none"><SelectValue placeholder="Select department" /></SelectTrigger><SelectContent>{["Administration", "Finance", "Human Resources", "Procurement", "ICT", "Operations", "Others"].map((v) => <SelectItem key={v} value={v}>{v}</SelectItem>)}</SelectContent></Select>;
       case "otherDepartment": return <Input autoFocus value={data.otherDepartment} onChange={(e) => update("otherDepartment", e.target.value)} placeholder="Department name" className="h-16 border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-2xl shadow-none focus-visible:ring-0" />;
-      case "conditions": return <div className="grid sm:grid-cols-2 sm:gap-x-8">{["Hypertension", "Diabetes", "Asthma", "Heart Disease", "Kidney Disease", "High Cholesterol", "None", "Others"].map((v) => { const id = `condition-${v}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"); return <Label key={v} htmlFor={id} className="flex cursor-pointer items-center justify-between border-b border-[#ddd8cf] py-4 text-[17px] font-semibold text-[#1d2731]"><span>{v}</span><Checkbox id={id} checked={data.conditions.includes(v)} onCheckedChange={(c) => toggleCondition(v, c === true)} className="size-5" /></Label>; })}</div>;
+      case "conditions": return <div className="grid grid-cols-2 gap-2 sm:grid-cols-2">{["Hypertension", "Diabetes", "Asthma", "Heart Disease", "Kidney Disease", "High Cholesterol", "None", "Others"].map((v) => { const id = `condition-${v}`.toLowerCase().replace(/[^a-z0-9]+/g, "-"); return <Label key={v} htmlFor={id} className="flex cursor-pointer items-center justify-between border-b border-[#ddd8cf] py-4 text-[15px] font-semibold text-[#1d2731]"><span>{v}</span><Checkbox id={id} checked={data.conditions.includes(v)} onCheckedChange={(c) => toggleCondition(v, c === true)} className="size-5" /></Label>; })}</div>;
       case "otherCondition": return <Input autoFocus value={data.otherCondition} onChange={(e) => update("otherCondition", e.target.value)} placeholder="Condition" className="h-16 border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-2xl shadow-none focus-visible:ring-0" />;
-      case "medication": return <RadioGroup value={data.medication} onValueChange={(v) => { update("medication", v); if (v === "No") update("medicationDetails", ""); }}><Choice group="medication" value="Yes" label="Yes" /><Choice group="medication" value="No" label="No" /></RadioGroup>;
-      case "medicationDetails": return <Textarea autoFocus value={data.medicationDetails} onChange={(e) => update("medicationDetails", e.target.value)} placeholder="Medication names and details" className="min-h-44 resize-none border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-xl shadow-none focus-visible:ring-0" />;
-      case "smoking": return <RadioGroup value={data.smoking} onValueChange={(v) => update("smoking", v)}>{["Yes", "No", "Former smoker"].map((v) => <Choice key={v} group="smoking" value={v} label={v} />)}</RadioGroup>;
-      case "alcohol": return <RadioGroup value={data.alcohol} onValueChange={(v) => update("alcohol", v)}>{["Yes", "Occasionally", "No"].map((v) => <Choice key={v} group="alcohol" value={v} label={v} />)}</RadioGroup>;
-      case "healthConcern": return <Textarea autoFocus value={data.healthConcern} onChange={(e) => update("healthConcern", e.target.value)} maxLength={1200} placeholder="Share a brief concern" className="min-h-44 resize-none border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-xl shadow-none focus-visible:ring-0" />;
-      case "requestedService": return <RadioGroup value={data.requestedService} onValueChange={(v) => update("requestedService", v)}>{services.map(([value, label, description]) => <Choice key={value} group="service" value={value} label={label} description={description} />)}</RadioGroup>;
-      case "medicalContact": return <RadioGroup value={data.medicalContact} onValueChange={(v) => update("medicalContact", v)}><Choice group="medical-contact" value="Yes" label="Yes, you may contact me" /><Choice group="medical-contact" value="No" label="No, do not contact me" /></RadioGroup>;
-      case "wellnessInfo": return <RadioGroup value={data.wellnessInfo} onValueChange={(v) => update("wellnessInfo", v)}><Choice group="wellness-info" value="Yes" label="Yes, keep me informed" /><Choice group="wellness-info" value="No" label="No, thank you" /></RadioGroup>;
+      case "medication": return <RadioGroup className="grid gap-2 sm:grid-cols-2" value={data.medication} onValueChange={(v) => { update("medication", v); if (v === "No") update("medicationDetails", ""); }}><Choice group="medication" value="Yes" label="Yes" /><Choice group="medication" value="No" label="No" /></RadioGroup>;
+      case "medicationDetails": return <Textarea autoFocus value={data.medicationDetails} onChange={(e) => update("medicationDetails", e.target.value)} placeholder="Medication names and details" className="min-h-28 resize-none border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-xl shadow-none focus-visible:ring-0" />;
+      case "smoking": return <RadioGroup className="grid gap-2 sm:grid-cols-3" value={data.smoking} onValueChange={(v) => update("smoking", v)}>{["Yes", "No", "Former smoker"].map((v) => <Choice key={v} group="smoking" value={v} label={v} />)}</RadioGroup>;
+      case "alcohol": return <RadioGroup className="grid gap-2 sm:grid-cols-3" value={data.alcohol} onValueChange={(v) => update("alcohol", v)}>{["Yes", "Occasionally", "No"].map((v) => <Choice key={v} group="alcohol" value={v} label={v} />)}</RadioGroup>;
+      case "healthConcern": return <Textarea autoFocus value={data.healthConcern} onChange={(e) => update("healthConcern", e.target.value)} maxLength={1200} placeholder="Share a brief concern" className="min-h-28 resize-none border-0 border-b border-[#b8b4ad] bg-transparent px-0 text-xl shadow-none focus-visible:ring-0" />;
+      case "requestedService": return <RadioGroup className="grid gap-2 sm:grid-cols-2" value={data.requestedService} onValueChange={(v) => update("requestedService", v)}>{services.map(([value, label, description]) => <Choice key={value} group="service" value={value} label={label} description={description} />)}</RadioGroup>;
+      case "medicalContact": return <RadioGroup className="grid gap-2 sm:grid-cols-2" value={data.medicalContact} onValueChange={(v) => update("medicalContact", v)}><Choice group="medical-contact" value="Yes" label="Yes, you may contact me" /><Choice group="medical-contact" value="No" label="No, do not contact me" /></RadioGroup>;
+      case "wellnessInfo": return <RadioGroup className="grid gap-2 sm:grid-cols-2" value={data.wellnessInfo} onValueChange={(v) => update("wellnessInfo", v)}><Choice group="wellness-info" value="Yes" label="Yes, keep me informed" /><Choice group="wellness-info" value="No" label="No, thank you" /></RadioGroup>;
       case "review": return <div className="space-y-7"><div className="divide-y divide-[#ddd8cf] border-y border-[#ddd8cf] text-sm">{[
-        ["Name", data.fullName], ["Gender and age", `${data.gender} · ${data.age}`], ["Phone", data.phone], ["Email", data.email || "Not provided"], ["Department", data.department === "Others" ? data.otherDepartment : data.department], ["Conditions", data.conditions.length ? data.conditions.join(", ") : "None selected"], ["Medication", data.medication === "Yes" ? data.medicationDetails : data.medication], ["Service", data.requestedService], ["Contact preferences", `Medical: ${data.medicalContact} · Wellness: ${data.wellnessInfo}`]
+        ["Name", data.fullName], ["Gender and age", `${data.gender} · ${data.age}`], ["Phone", data.phone], ["Email", data.email], ["Department", data.department === "Others" ? data.otherDepartment : data.department], ["Conditions", data.conditions.length ? data.conditions.join(", ") : "None selected"], ["Medication", data.medication === "Yes" ? data.medicationDetails : data.medication], ["Service", data.requestedService], ["Contact preferences", `Medical: ${data.medicalContact} · Wellness: ${data.wellnessInfo}`]
       ].map(([label, value]) => <div key={label} className="grid gap-1 py-4 sm:grid-cols-[180px_1fr]"><span className="text-xs font-bold uppercase tracking-[.12em] text-[#7c838b]">{label}</span><span className="font-semibold text-[#202a34]">{value}</span></div>)}</div><div className="flex items-start gap-4 border-l-2 border-[#b5122b] bg-[#fff5f5] p-5"><Checkbox id="consent-final" checked={data.consent} onCheckedChange={(c) => update("consent", c === true)} className="mt-1" /><Label htmlFor="consent-final" className="cursor-pointer text-sm leading-7 text-[#4e5964]"><strong className="block text-[#1d2731]">I agree to the consent statement</strong>I understand that my information will be used for BUA Health Outreach registration, authorised screening administration and necessary follow-up.</Label></div></div>;
       default: return null;
     }
@@ -181,27 +181,27 @@ export default function RegisterPage() {
 
       <section className="flex min-h-screen min-w-0 flex-col">
         <header className="sticky top-0 z-30 border-b border-[#dedad2] bg-[#f8f6f1]/95 backdrop-blur-xl">
-          <div className="flex h-20 items-center justify-between px-5 sm:px-10 lg:px-14"><div className="lg:hidden"><BuaMark compact /></div><Button asChild variant="ghost" size="sm" className="hidden lg:inline-flex"><Link href="/"><ArrowLeft /> Exit</Link></Button><div className="ml-auto flex items-center gap-2 text-xs font-semibold text-[#69727c]"><ShieldCheck className="size-4 text-[#2a67a5]" /> Draft saved privately</div></div>
+          <div className="flex h-16 items-center justify-between px-5 sm:px-8 lg:px-10"><div className="lg:hidden"><BuaMark compact /></div><Button asChild variant="ghost" size="sm" className="hidden lg:inline-flex"><Link href="/"><ArrowLeft /> Exit</Link></Button><div className="ml-auto flex items-center gap-2 text-xs font-semibold text-[#69727c]"><ShieldCheck className="size-4 text-[#2a67a5]" /> Draft saved privately</div></div>
           <div className="h-[3px] bg-[#e3dfd7]"><motion.div className="h-full bg-[#b5122b]" animate={{ width: `${progress}%` }} transition={{ duration: .3 }} /></div>
         </header>
 
-        <div className="flex flex-1 items-center">
-          <div className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-10 lg:px-14 lg:py-16">
-            <div className="mb-10 flex items-center justify-between gap-6 text-[11px] font-bold uppercase tracking-[.16em] text-[#7c838b]"><span>{question?.section}</span><span>{index + 1} / {questions.length}</span></div>
+        <div className="flex min-h-0 flex-1 items-center">
+          <div className="mx-auto w-full max-w-3xl px-5 py-5 sm:px-8 lg:px-10 lg:py-7">
+            <div className="mb-4 flex items-center justify-between gap-6 text-[11px] font-bold uppercase tracking-[.16em] text-[#7c838b]"><span>{question?.section}</span><span>{index + 1} / {questions.length}</span></div>
             <AnimatePresence mode="wait" custom={direction}>
               <motion.div key={`${question?.key}-${index}`} custom={direction} initial={{ opacity: 0, x: direction * 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: direction * -12 }} transition={{ duration: .22, ease: "easeOut" }}>
                 <p className="text-sm font-semibold text-[#b5122b]">{question?.kicker}</p>
-                <h1 className="display-serif mt-3 text-balance text-[clamp(2.4rem,6vw,5rem)] leading-[.98] tracking-[-.055em] text-[#142235]">{question?.title}</h1>
-                {question?.help && <p className="mt-5 max-w-2xl text-base leading-7 text-[#68727c]">{question.help}</p>}
-                {question?.optional && <span className="mt-4 inline-flex rounded-full bg-[#e9e5dd] px-3 py-1 text-[10px] font-black uppercase tracking-[.12em] text-[#666f78]">Optional</span>}
-                <div className="mt-10">{answer}</div>
+                <h1 className="display-serif mt-2 text-balance text-[clamp(1.85rem,4.2vw,3.65rem)] leading-[1.02] tracking-[-.055em] text-[#142235]">{question?.title}</h1>
+                {question?.help && <p className="mt-3 max-w-2xl text-sm leading-6 text-[#68727c]">{question.help}</p>}
+                {question?.optional && <span className="mt-2 inline-flex rounded-full bg-[#e9e5dd] px-3 py-1 text-[10px] font-black uppercase tracking-[.12em] text-[#666f78]">Optional</span>}
+                <div className="mt-5 max-h-[48dvh] overflow-y-auto overscroll-contain pr-1 sm:max-h-[50dvh]">{answer}</div>
               </motion.div>
             </AnimatePresence>
-            {error && <p className="mt-6 border-l-2 border-[#b5122b] pl-4 text-sm font-semibold text-[#98152a]">{error}</p>}
+            {error && <p className="mt-3 border-l-2 border-[#b5122b] pl-4 text-sm font-semibold text-[#98152a]">{error}</p>}
           </div>
         </div>
 
-        <div className="sticky bottom-0 border-t border-[#dedad2] bg-[#f8f6f1]/96 px-5 py-4 backdrop-blur-xl sm:px-10 lg:px-14">
+        <div className="sticky bottom-0 border-t border-[#dedad2] bg-[#f8f6f1]/96 px-5 py-3 backdrop-blur-xl sm:px-10 lg:px-14">
           <div className="mx-auto flex max-w-3xl items-center justify-between gap-4"><Button type="button" variant="ghost" onClick={() => move(Math.max(0, index - 1))} disabled={index === 0}><ArrowLeft /> Back</Button><div className="hidden items-center gap-2 text-xs text-[#7a828b] sm:flex"><Clock3 className="size-4" /> Usually under 3 minutes</div>{question?.key === "review" ? <Button size="lg" onClick={submit} disabled={submitting}>{submitting ? <><LoaderCircle className="animate-spin" /> Submitting…</> : <>Submit registration <ArrowRight /></>}</Button> : <Button size="lg" onClick={next}>Continue <ArrowRight /></Button>}</div>
         </div>
       </section>

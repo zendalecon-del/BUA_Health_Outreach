@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       age: input.age,
       phone: input.phone,
       phone_normalized: normalizePhone(input.phone),
-      email: input.email || null,
+      email: input.email,
       department: input.department,
       other_department: input.department === "Others" ? input.otherDepartment : null,
       medical_conditions: input.conditions,

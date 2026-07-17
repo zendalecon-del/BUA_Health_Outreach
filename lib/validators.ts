@@ -7,7 +7,7 @@ export const registrationSchema = z.object({
   gender: z.enum(["Male", "Female", "Prefer not to say"]),
   age: z.coerce.number().int().min(16).max(100),
   phone: z.string().trim().min(10).max(24),
-  email: z.union([z.literal(""), z.string().email()]).optional().default(""),
+  email: z.string().trim().email(),
   department: z.enum(["Administration", "Finance", "Human Resources", "Procurement", "ICT", "Operations", "Others"]),
   otherDepartment: z.string().trim().max(100).optional().default(""),
   conditions: z.array(z.string().max(80)).max(12).default([]),

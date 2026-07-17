@@ -17,6 +17,7 @@ export function PublicShell({ children, narrow = false }: { children: React.Reac
           <PoweredBy />
           <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-xs text-[#747a83]">
             <span>© 2026 BUA Health Outreach</span>
+            <Link className="hover:text-[var(--bua-red)]" href="/zendale">About Zendale</Link>
             <Link className="hover:text-[var(--bua-red)]" href="/lookup">Participant lookup</Link>
             <Link className="hover:text-[var(--bua-red)]" href="/staff/login">Authorised personnel</Link>
           </div>

@@ -1,179 +1,80 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "motion/react";
-import {
-  ArrowRight,
-  Check,
-  ChevronDown,
-  Clock3,
-  LockKeyhole,
-  Search,
-  ShieldCheck,
-} from "lucide-react";
+import { ArrowRight, Check, ChevronDown, Clock3, KeyRound, LockKeyhole, ShieldCheck } from "lucide-react";
 import { BuaMark, PoweredBy } from "@/components/brand";
-import { Button } from "@/components/ui/button";
 
 const faqs = [
-  [
-    "What will I receive after registration?",
-    "Your registration number and a private lookup code will appear immediately. Keep both details safe; you will need them to check your status or approved result.",
-  ],
-  [
-    "Can I register without an email address?",
-    "Yes. Email is optional. Save or copy both identifiers from the confirmation screen before you leave.",
-  ],
-  [
-    "Who can see my health information?",
-    "Only authorised outreach personnel can access information required for registration, screening administration and approved follow-up.",
-  ],
+  ["What is my registration number for?", "It identifies your registration during check-in and screening, so staff can find your record quickly."],
+  ["What is the private lookup code for?", "It works with your registration number to protect access to your screening status and approved information."],
+  ["Should I share my private lookup code?", "No. Keep it confidential because it may allow another person to access your screening information."],
+  ["Why is an email address required?", "We use it to send your registration number and private lookup code after submission."],
 ];
 
 export default function HomePage() {
   return (
-    <main className="min-h-screen bg-[#f3efe8] text-[#17202a]">
-      <section className="relative min-h-[760px] overflow-hidden bg-[#0b2038] text-white lg:min-h-screen">
-        <div className="brand-grid pointer-events-none absolute inset-0 opacity-55" />
-        <div className="absolute left-0 top-0 h-1.5 w-full bg-[linear-gradient(90deg,#b5122b_0_64%,#f2c230_64%_72%,#2a67a5_72%_100%)]" />
-
-        <header className="relative z-20 mx-auto flex max-w-[1540px] items-center justify-between px-5 py-5 sm:px-8 lg:px-12 lg:py-7">
-          <BuaMark inverse />
-          <div className="hidden items-center gap-5 lg:flex">
-            <Link href="/lookup" className="text-sm font-bold text-white/68 transition hover:text-white">
-              Already registered?
-            </Link>
-            <Button asChild variant="outline" className="border-white/22 bg-transparent text-white hover:border-white hover:bg-white hover:text-[#0b2038]">
-              <Link href="/lookup"><Search /> Check my record</Link>
-            </Button>
+    <main className="min-h-screen bg-[#f5f1e9] text-[#142235]">
+      <section className="relative min-h-[100dvh] overflow-hidden">
+        <header className="relative z-30 mx-auto flex h-20 max-w-[1600px] items-center justify-between px-5 sm:px-8 lg:px-12">
+          <BuaMark />
+          <div className="flex items-center gap-2">
+            <Link href="/lookup" className="hidden rounded-full border border-[#d6d0c5] bg-white/70 px-4 py-2 text-xs font-bold text-[#4b5967] backdrop-blur-md transition hover:bg-white sm:inline-flex">Check my record</Link>
+            <Link href="/staff/login" className="rounded-full border border-[#d6d0c5] bg-white/70 px-4 py-2 text-xs font-bold text-[#4b5967] backdrop-blur-md transition hover:bg-white">Staff login</Link>
           </div>
         </header>
 
-        <div className="relative z-10 mx-auto grid min-h-[680px] max-w-[1540px] lg:grid-cols-[1.02fr_.98fr]">
-          <motion.div
-            className="flex flex-col justify-center px-5 pb-14 pt-8 sm:px-8 lg:px-12 lg:pb-20 lg:pt-12"
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: .5 }}
-          >
-            <div className="mb-7 flex items-center gap-3">
-              <span className="h-px w-10 bg-[#f2c230]" />
-              <p className="text-[11px] font-black uppercase tracking-[.24em] text-[#f3d861]">Official employee health programme</p>
+        <div className="mx-auto grid min-h-[calc(100dvh-80px)] max-w-[1600px] items-stretch px-5 pb-5 sm:px-8 sm:pb-8 lg:grid-cols-[.88fr_1.12fr] lg:px-12 lg:pb-12">
+          <div className="relative z-10 flex flex-col justify-between rounded-t-[2rem] bg-[#f5f1e9] px-1 py-10 sm:px-4 lg:rounded-l-[2.5rem] lg:rounded-tr-none lg:px-8 lg:py-14 xl:px-12">
+            <div className="max-w-3xl">
+              <div className="inline-flex items-center gap-2 rounded-full border border-[#d4cec3] bg-white/65 px-4 py-2 text-[10px] font-black uppercase tracking-[.18em] text-[#2a67a5]"><ShieldCheck className="size-4" /> Confidential employee registration</div>
+              <h1 className="mt-8 max-w-3xl text-balance text-[clamp(3.6rem,7.6vw,8.6rem)] font-black leading-[.82] tracking-[-.08em]">Your health<br /><span className="text-[#b5122b]">starts here.</span></h1>
+              <p className="mt-8 max-w-xl text-base leading-8 text-[#5e6975] sm:text-lg">Register for the BUA Health Outreach in a private, guided flow designed to take only a few minutes.</p>
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Link href="/register" className="inline-flex h-14 items-center gap-3 rounded-full bg-[#b5122b] px-7 text-sm font-black text-white shadow-[0_16px_35px_rgba(181,18,43,.2)] transition hover:-translate-y-0.5 hover:bg-[#991128]">Begin registration <ArrowRight className="size-4" /></Link>
+                <Link href="/lookup" className="inline-flex h-14 items-center gap-2 rounded-full border border-[#cbc4b9] bg-white/60 px-6 text-sm font-bold text-[#293746] transition hover:bg-white"><KeyRound className="size-4 text-[#2a67a5]" /> Already registered?</Link>
+              </div>
             </div>
-            <h1 className="display-serif max-w-[760px] text-balance text-[clamp(3.2rem,6.7vw,7.4rem)] leading-[.92] tracking-[-.065em] text-white">
-              Register for your health screening.
-            </h1>
-            <p className="mt-7 max-w-[610px] text-[17px] leading-8 text-white/67 sm:text-lg">
-              A guided registration for BUA Health Outreach. It takes about three minutes, and your secure registration details are issued immediately.
-            </p>
+            <div className="mt-12 grid max-w-2xl gap-4 border-t border-[#d8d1c6] pt-6 text-xs text-[#61707e] sm:grid-cols-3 lg:mt-8">
+              <div className="flex items-center gap-2"><Clock3 className="size-4 text-[#b5122b]" /><strong className="text-[#263544]">2–3 minutes</strong></div>
+              <div className="flex items-center gap-2"><LockKeyhole className="size-4 text-[#2a67a5]" /><strong className="text-[#263544]">Private by design</strong></div>
+              <div className="flex items-center gap-2"><Check className="size-4 text-[#287a55]" /><strong className="text-[#263544]">Email confirmation</strong></div>
+            </div>
+          </div>
 
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <Button asChild size="lg" className="group h-14 min-w-56 bg-[#b5122b] text-base hover:bg-[#cf1735]">
-                <Link href="/register">Begin registration <ArrowRight className="transition-transform group-hover:translate-x-1" /></Link>
-              </Button>
-              <Button asChild size="lg" variant="outline" className="h-14 min-w-52 border-white/20 bg-white/5 text-white hover:bg-white hover:text-[#0b2038] lg:hidden">
-                <Link href="/lookup"><Search /> Check my record</Link>
-              </Button>
-            </div>
-
-            <div className="mt-11 grid max-w-[690px] gap-5 border-t border-white/13 pt-7 sm:grid-cols-3">
-              <div>
-                <div className="flex items-center gap-2 text-sm font-bold text-white"><Clock3 className="size-4 text-[#f2c230]" /> 2–3 minutes</div>
-                <p className="mt-2 text-xs leading-5 text-white/45">Complete the form on any phone or computer.</p>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 text-sm font-bold text-white"><LockKeyhole className="size-4 text-[#7bb6dd]" /> Private by design</div>
-                <p className="mt-2 text-xs leading-5 text-white/45">Your lookup code is confidential and uniquely generated.</p>
-              </div>
-              <div>
-                <div className="flex items-center gap-2 text-sm font-bold text-white"><ShieldCheck className="size-4 text-[#73c69b]" /> Email optional</div>
-                <p className="mt-2 text-xs leading-5 text-white/45">Registration still works when no email is provided.</p>
+          <div className="relative min-h-[460px] overflow-hidden rounded-b-[2rem] lg:rounded-r-[2.5rem] lg:rounded-bl-none">
+            <Image src="/outreach/outreach-2.webp" alt="Zendale health professionals supporting a corporate outreach participant" fill priority className="object-cover" sizes="(min-width:1024px) 58vw, 100vw" />
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,27,51,.02),rgba(8,27,51,.42))]" />
+            <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 lg:p-10">
+              <div className="ml-auto max-w-sm rounded-[1.5rem] border border-white/20 bg-[#071c37]/76 p-5 text-white backdrop-blur-xl">
+                <p className="text-[10px] font-black uppercase tracking-[.18em] text-[#74b8ff]">What happens next</p>
+                <p className="mt-3 text-sm leading-6 text-white/75">After registration, keep your registration number and private lookup code. Staff will use your registration number during screening.</p>
               </div>
             </div>
-          </motion.div>
-
-          <motion.div
-            className="relative min-h-[520px] overflow-hidden lg:min-h-full"
-            initial={{ opacity: 0, scale: 1.015 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: .7, delay: .08 }}
-          >
-            <Image
-              src="/outreach/outreach-4.webp"
-              alt="A Zendale healthcare professional discussing screening information with a participant"
-              fill
-              priority
-              className="object-cover object-[55%_center]"
-              sizes="(min-width: 1024px) 50vw, 100vw"
-            />
-            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(11,32,56,.48)_0%,transparent_30%),linear-gradient(180deg,transparent_58%,rgba(6,19,34,.72)_100%)]" />
-            <div className="absolute bottom-0 left-0 right-0 flex items-end justify-between gap-5 p-6 sm:p-8 lg:p-10">
-              <div className="max-w-[470px] border-l-2 border-[#f2c230] pl-4">
-                <p className="text-[11px] font-black uppercase tracking-[.2em] text-[#f3d861]">What happens next</p>
-                <p className="mt-2 text-sm leading-6 text-white/82">Register, attend your screening, then return securely to view information approved for you.</p>
-              </div>
-              <div className="hidden rounded-full border border-white/20 bg-black/18 px-4 py-2 text-xs font-bold text-white/80 backdrop-blur-sm sm:block">BUA × Zendale</div>
-            </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
-      <section className="border-b border-[#d9d4cb] bg-[#fbfaf7]">
-        <div className="mx-auto grid max-w-[1540px] gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[.72fr_1.28fr] lg:px-12 lg:py-24">
-          <div>
-            <p className="text-[11px] font-black uppercase tracking-[.22em] text-[#b5122b]">Before you register</p>
-            <h2 className="display-serif mt-4 max-w-md text-4xl leading-[1.05] tracking-[-.045em] text-[#132235] sm:text-5xl">Everything you need to know, up front.</h2>
-          </div>
-          <div className="grid gap-0 border-t border-[#d7d2c8]">
+      <section className="border-y border-[#d8d1c6] bg-white">
+        <div className="mx-auto grid max-w-[1540px] gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[.7fr_1.3fr] lg:px-12 lg:py-24">
+          <div><p className="text-[11px] font-black uppercase tracking-[.22em] text-[#b5122b]">A clear three-stage journey</p><h2 className="mt-4 text-4xl font-black tracking-[-.055em] sm:text-5xl">Register once.<br />Return securely.</h2></div>
+          <div className="divide-y divide-[#ded8cd] border-t border-[#ded8cd]">
             {[
-              ["Have your phone number ready", "It is required for registration and authorised outreach communication."],
-              ["Email is optional", "You can still register and receive both identifiers on screen."],
-              ["Keep your private code confidential", "It works with your registration number to protect access to your record."],
-            ].map(([title, body], index) => (
-              <div key={title} className="grid gap-3 border-b border-[#d7d2c8] py-6 sm:grid-cols-[54px_1fr]">
-                <span className="text-xs font-black text-[#b5122b]">0{index + 1}</span>
-                <div>
-                  <h3 className="text-lg font-black tracking-[-.025em] text-[#17202a]">{title}</h3>
-                  <p className="mt-2 max-w-2xl text-sm leading-6 text-[#68717b]">{body}</p>
-                </div>
-              </div>
-            ))}
+              ["01", "Register", "Answer one clear question at a time. Only relevant follow-up questions appear."],
+              ["02", "Attend screening", "Present your registration number so authorised staff can locate your record."],
+              ["03", "View approved information", "Use both identifiers to check your screening status, referral or follow-up instructions."],
+            ].map(([number,title,body])=><article key={number} className="grid gap-3 py-6 sm:grid-cols-[60px_180px_1fr]"><span className="text-xs font-black text-[#b5122b]">{number}</span><h3 className="text-lg font-black">{title}</h3><p className="text-sm leading-7 text-[#64717d]">{body}</p></article>)}
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f3efe8]">
-        <div className="mx-auto grid max-w-[1540px] gap-10 px-5 py-16 sm:px-8 lg:grid-cols-[.72fr_1.28fr] lg:px-12 lg:py-24">
-          <div>
-            <p className="text-[11px] font-black uppercase tracking-[.22em] text-[#2a67a5]">Questions</p>
-            <h2 className="mt-4 text-3xl font-black tracking-[-.045em] text-[#132235]">Clear answers before you continue.</h2>
-            <div className="mt-7 flex items-center gap-3 text-sm text-[#58636f]"><Check className="size-4 text-[#287a55]" /> No payment is taken during registration.</div>
-          </div>
-          <div className="border-t border-[#d3cec4]">
-            {faqs.map(([question, answer]) => (
-              <details key={question} className="group border-b border-[#d3cec4] py-1">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-5 py-5 text-base font-black text-[#18222d] marker:hidden">
-                  {question}
-                  <ChevronDown className="size-5 shrink-0 text-[#2a67a5] transition-transform group-open:rotate-180" />
-                </summary>
-                <p className="max-w-3xl pb-6 pr-8 text-sm leading-7 text-[#65707b]">{answer}</p>
-              </details>
-            ))}
-          </div>
+      <section className="bg-[#f5f1e9]">
+        <div className="mx-auto grid max-w-[1540px] gap-12 px-5 py-16 sm:px-8 lg:grid-cols-[.75fr_1.25fr] lg:px-12 lg:py-24">
+          <div><p className="text-[11px] font-black uppercase tracking-[.22em] text-[#2a67a5]">Before you register</p><h2 className="mt-4 text-4xl font-black tracking-[-.055em]">Clear answers. No surprises.</h2><p className="mt-5 max-w-md text-sm leading-7 text-[#63707c]">Registration does not collect payment. Your details are used for outreach administration, screening and approved follow-up.</p></div>
+          <div className="border-t border-[#d6cfc4]">{faqs.map(([question,answer])=><details key={question} className="group border-b border-[#d6cfc4]"><summary className="flex cursor-pointer list-none items-center justify-between gap-5 py-5 text-base font-black marker:hidden">{question}<ChevronDown className="size-5 text-[#2a67a5] transition group-open:rotate-180" /></summary><p className="max-w-3xl pb-6 pr-8 text-sm leading-7 text-[#65717d]">{answer}</p></details>)}</div>
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-[#091a2e] text-white">
-        <div className="mx-auto flex max-w-[1540px] flex-col justify-between gap-6 px-5 py-8 sm:px-8 md:flex-row md:items-center lg:px-12">
-          <BuaMark inverse />
-          <div className="flex flex-col items-start gap-4 md:items-end">
-            <PoweredBy inverse />
-            <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs text-white/45">
-              <span>© 2026 BUA Health Outreach</span>
-              <Link href="/staff/login" className="transition hover:text-white">Authorised personnel</Link>
-            </div>
-          </div>
-        </div>
+      <footer className="bg-[#071c37] text-white">
+        <div className="mx-auto flex max-w-[1540px] flex-col justify-between gap-6 px-5 py-8 sm:px-8 md:flex-row md:items-center lg:px-12"><BuaMark inverse /><div className="flex flex-col gap-3 md:items-end"><PoweredBy inverse /><div className="flex flex-wrap gap-5 text-xs text-white/45"><Link href="/zendale" className="hover:text-white">About Zendale</Link><Link href="/lookup" className="hover:text-white">Participant lookup</Link><Link href="/staff/login" className="hover:text-white">Authorised personnel</Link></div></div></div>
       </footer>
     </main>
   );
