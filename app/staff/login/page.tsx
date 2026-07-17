@@ -1,2 +1,2 @@
 import { PortalLogin } from "@/components/portal-login";
-export default function StaffLoginPage() { return <PortalLogin mode="staff" />; }
+export default function StaffLoginPage() { return <PortalLogin mode="staff"/>; }

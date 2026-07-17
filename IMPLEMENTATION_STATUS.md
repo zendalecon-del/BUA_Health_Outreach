@@ -1,33 +1,29 @@
-# Implementation Status
+# Implementation Status — Version 2 Production Rebuild
 
-## Completed in this source package
+## Completed
 
-- Complete public route family and direct registration opening page
-- Six-step participant registration with conditional logic, review and active consent
-- Immediate generated registration number and private lookup code
-- Participant lookup and safe participant-facing result page
-- Separate responsive staff and admin portal shells
-- Staff/admin dashboards, participant tables and participant profiles
-- Four-step screening workflow with save, exit, review and formal-completion confirmation
-- Referral/follow-up operational queue
-- Admin referral-hospital management prototype
-- Admin staff creation and one-time credential display prototype
-- Admin screening records and password pages
-- Real multi-sheet Excel workbook download
-- Responsive mobile/tablet/desktop layouts
-- Accessible labels, focus states, touch targets and reduced-motion support
-- Successful ESLint and optimized Next.js production build
-- Zero vulnerabilities reported by `npm audit --omit=dev` at packaging time
+- Entire public and portal visual system replaced.
+- Official supplied BUA and Zendale logo assets integrated.
+- Four supplied outreach photographs optimised and packaged.
+- BUA/Zendale combined colour system implemented.
+- Public opening page, six-step registration, success, secure lookup and result record redesigned.
+- Staff/admin login and portal shells redesigned.
+- Live Supabase-backed dashboards, participants, profiles, screening, referrals, follow-ups, hospitals, staff management and export implemented.
+- Supabase SQL migration, RLS, sequences, triggers, audit and rate-limit tables included.
+- Resend registration, staff-credential and participant result-ready email integrations included, with email event logging.
+- Cryptographic lookup-code generation and HMAC hashing included.
+- Node 22/npm 10.9.2 deployment stabilisation included for Netlify and Vercel.
+- TypeScript check passed.
+- ESLint passed.
+- Next.js production build passed.
 
-## Requires deployment configuration
+## Requires organisation configuration
 
-- Persistent managed Postgres database and migrations
-- Supabase Auth / approved authentication provider
-- Server-side role enforcement and RLS policies
-- Email provider, verified sender domain and delivery webhooks
-- Durable registration idempotency and database sequences
-- Lookup-code hashing, rate limits and lockout storage
-- Audit-event persistence and administrator export logging
-- Approved legal/privacy text and clinical validation ranges
-- Official BUA/Zendale logo files and final brand sign-off
-- Production monitoring, backup, retention and incident procedures
+- Populate production environment variables.
+- Run the Supabase migration.
+- Create and bootstrap the first administrator.
+- Verify the Resend sending subdomain.
+- Replace example support/sender addresses with approved addresses.
+- Confirm clinical wording, measurement units, plausible ranges and referral facilities.
+- Complete privacy, retention, backup, incident-response and security approval.
+- Conduct end-to-end acceptance testing with authorised BUA/Zendale representatives.

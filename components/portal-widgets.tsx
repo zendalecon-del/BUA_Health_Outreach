@@ -1,43 +1,31 @@
-import { ArrowDownRight, ArrowUpRight, MoreHorizontal } from "lucide-react";
+import { ArrowUpRight, type LucideIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
-import type { ScreeningStatus } from "@/lib/mock-data";
 
-const tones: Record<string, { bg: string; dot: string; text: string }> = {
-  teal: { bg: "bg-[#e8f7f3]", dot: "bg-[#15978d]", text: "text-[#12635f]" },
-  slate: { bg: "bg-[#eef2f3]", dot: "bg-[#71858b]", text: "text-[#4d636a]" },
-  blue: { bg: "bg-[#eaf2fb]", dot: "bg-[#4c82b6]", text: "text-[#345f88]" },
-  green: { bg: "bg-[#eaf6e9]", dot: "bg-[#5d9d50]", text: "text-[#467740]" },
-  coral: { bg: "bg-[#fceceb]", dot: "bg-[#dc6b60]", text: "text-[#9f4e47]" },
-  gold: { bg: "bg-[#fff3df]", dot: "bg-[#d99a35]", text: "text-[#855f22]" },
-};
-
-export function MetricCard({ label, value, trend, tone = "teal", change = "up" }: { label: string; value: string; trend: string; tone?: string; change?: "up" | "down" | "neutral" }) {
-  const style = tones[tone] ?? tones.teal;
-  return (
-    <Card className="group relative overflow-hidden border-white bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-lg">
-      <div className={cn("absolute -right-8 -top-8 size-24 rounded-full opacity-55 transition group-hover:scale-110", style.bg)} />
-      <div className="relative">
-        <div className="flex items-center justify-between"><p className="text-xs font-bold uppercase tracking-[0.09em] text-[#71868c]">{label}</p><span className={cn("size-2.5 rounded-full", style.dot)} /></div>
-        <p className="mt-4 text-3xl font-black tracking-[-0.045em] text-[var(--navy)]">{value}</p>
-        <p className={cn("mt-2 inline-flex items-center gap-1 text-xs font-semibold", style.text)}>{change === "up" && <ArrowUpRight className="size-3.5" />}{change === "down" && <ArrowDownRight className="size-3.5" />}{trend}</p>
-      </div>
-    </Card>
-  );
-}
-
-export function StatusBadge({ status }: { status: ScreeningStatus | string }) {
-  const variant = status === "Completed" ? "default" : status === "Updated" ? "info" : status === "In Progress" ? "warning" : status === "Active" ? "default" : status === "Urgent" ? "destructive" : "secondary";
-  return <Badge variant={variant}>{status}</Badge>;
+export function MetricCard({ label, value, helper, icon: Icon, tone = "blue" }: { label: string; value: number | string; helper?: string; icon: LucideIcon; tone?: "red" | "blue" | "green" | "gold" | "slate" }) {
+  const tones = { red: "bg-[#fff1f3] text-[#a5162a]", blue: "bg-[#eaf1fb] text-[#225f9d]", green: "bg-[#e8f5ee] text-[#157347]", gold: "bg-[#fff1cf] text-[#8a5a00]", slate: "bg-[#efede8] text-[#59606a]" };
+  return <Card className="p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><div><p className="text-[10px] font-black uppercase tracking-[.12em] text-[#7c828c]">{label}</p><p className="mt-3 text-3xl font-black tracking-[-.045em] text-[#1e232a]">{value}</p>{helper && <p className="mt-1 text-xs text-[#777e87]">{helper}</p>}</div><div className={cn("grid size-10 place-items-center rounded-xl", tones[tone])}><Icon className="size-5"/></div></div></Card>;
 }
 
 export function PanelHeader({ title, description, action }: { title: string; description?: string; action?: React.ReactNode }) {
-  return (
-    <div className="flex flex-col justify-between gap-3 border-b border-[#e0e9e7] p-5 sm:flex-row sm:items-center">
-      <div><h2 className="text-base font-bold tracking-[-0.02em] text-[var(--navy)]">{title}</h2>{description && <p className="mt-1 text-xs leading-5 text-[#71868c]">{description}</p>}</div>
-      {action ?? <Button variant="ghost" size="icon"><MoreHorizontal /></Button>}
-    </div>
-  );
+  return <div className="flex flex-col justify-between gap-3 border-b border-[#e8e3db] px-5 py-4 sm:flex-row sm:items-center"><div><h2 className="font-bold tracking-[-.02em] text-[#22272e]">{title}</h2>{description && <p className="mt-1 text-xs leading-5 text-[#7a818a]">{description}</p>}</div>{action}</div>;
+}
+
+export function StatusBadge({ status }: { status: string }) {
+  const key = status.toLowerCase().replace(/_/g, " ");
+  if (["completed","active","confirmed","delivered"].includes(key)) return <Badge>{key}</Badge>;
+  if (["updated","in progress","scheduled"].includes(key)) return <Badge variant="info">{key}</Badge>;
+  if (["urgent","failed","inactive","unable to reach"].includes(key)) return <Badge variant="destructive">{key}</Badge>;
+  if (["pending","not started","informed"].includes(key)) return <Badge variant="warning">{key}</Badge>;
+  return <Badge variant="secondary">{key}</Badge>;
+}
+
+export function EmptyState({ icon: Icon, title, description, action }: { icon: LucideIcon; title: string; description: string; action?: React.ReactNode }) {
+  return <div className="grid place-items-center px-6 py-14 text-center"><div className="grid size-12 place-items-center rounded-2xl bg-[#efede8] text-[#6c737d]"><Icon className="size-5"/></div><h3 className="mt-4 text-lg font-bold text-[#242930]">{title}</h3><p className="mt-2 max-w-md text-sm leading-6 text-[#747b84]">{description}</p>{action && <div className="mt-5">{action}</div>}</div>;
+}
+
+export function QueueLink({ title, count, href, tone = "blue" }: { title: string; count: number; href: string; tone?: "red" | "blue" | "gold" }) {
+  const colors = { red: "border-[#f0cbd1] bg-[#fff7f8] text-[#94172a]", blue: "border-[#d5e1ef] bg-[#f6f8fb] text-[#225f9d]", gold: "border-[#ead9a0] bg-[#fff9e9] text-[#805400]" };
+  return <a href={href} className={cn("flex items-center justify-between rounded-2xl border p-4 transition hover:-translate-y-0.5 hover:shadow-sm", colors[tone])}><span className="text-sm font-semibold">{title}</span><span className="inline-flex items-center gap-1 text-lg font-black">{count}<ArrowUpRight className="size-4"/></span></a>;
 }

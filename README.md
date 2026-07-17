@@ -1,87 +1,105 @@
 # BUA Health Outreach Registration & Screening System
 
-A polished, responsive Next.js implementation of the BUA Health Outreach product specification. It includes the public participant experience, staff portal, admin portal, animated multi-step forms, secure-lookup experience, screening workflow, operational queues, staff and referral-hospital management, plus a working Excel workbook export.
+A production-oriented Next.js 16 application for participant registration, secure result lookup, staff screening, referral/follow-up operations, staff administration, transactional email and Excel export.
 
-> **Prototype status:** the complete UX and route structure are implemented with realistic mock records. The registration endpoint generates demo identifiers and the Excel endpoint generates a real `.xlsx` workbook. Supabase authentication/database, production audit storage, rate limiting and Resend delivery are intentionally not connected because deployment credentials and approved data policies were not supplied.
+## What changed in Version 2
+
+- Complete visual redesign using the supplied official BUA and Zendale assets.
+- BUA red and gold combined with Zendale blue in a restrained corporate-health design system.
+- Supplied outreach photographs integrated into the public opening and portal login experiences.
+- Fake dashboard statistics and fake participant records removed.
+- Public registration now writes to Supabase PostgreSQL.
+- Private lookup codes are generated with cryptographic randomness and stored only as HMAC hashes.
+- Participant lookup returns a restricted participant-safe projection.
+- Supabase Auth staff/admin sign-in using immutable Staff IDs.
+- Live participant lists, dashboards, screenings, referrals, follow-ups, hospitals and staff accounts.
+- Resend registration confirmation, staff credential and result-ready notification workflows.
+- Real Excel export from database records.
+- Server-side rate limiting stored in PostgreSQL.
+- Node 22, npm 10.9.2, public npm registry, Netlify and Vercel deployment configuration.
 
 ## Technology
 
-- Next.js 16 App Router + React 19 + TypeScript
+- Next.js 16 App Router
+- React 19 and TypeScript
 - Tailwind CSS 4
 - shadcn/ui-style Radix components
-- Motion for React (current Framer Motion package)
-- Zod validation
-- ExcelJS workbook generation
-- Lucide icon system
+- Motion for React
+- Supabase PostgreSQL and Auth
+- Resend
+- ExcelJS
 
-## Run locally
+## Required environment variables
+
+Copy `.env.example` to `.env.local` for local work. Add the same values in Netlify or Vercel settings.
+
+```env
+APP_URL=https://your-production-domain.example
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+RESEND_API_KEY=
+EMAIL_FROM=BUA Health Outreach <no-reply@notifications.example.com>
+SUPPORT_EMAIL=outreach-support@example.com
+LOOKUP_CODE_PEPPER=
+```
+
+Generate the pepper once and store it securely:
 
 ```bash
-npm install
+openssl rand -hex 48
+```
+
+Do not change the pepper after participant records have been created.
+
+## Database setup
+
+1. Create the Supabase project.
+2. Open **SQL Editor**.
+3. Run `supabase/migrations/202607170001_initial_schema.sql` once.
+4. In Supabase Authentication, create the first administrator user with email and password.
+5. Edit `supabase/BOOTSTRAP_ADMIN.sql` and replace the administrator email.
+6. Run the edited bootstrap query.
+7. Sign in through `/admin/login` using the generated Staff ID from `staff_profiles` and the Auth password.
+
+The SQL intentionally creates no anonymous table policies. Public registration and lookup pass through protected Next.js route handlers using the server-only service-role key.
+
+## Local development
+
+```bash
+npm ci
 npm run dev
 ```
 
-Open `http://localhost:3000`.
-
-Production verification:
+Quality checks:
 
 ```bash
+npm run typecheck
 npm run lint
 npm run build
-npm run start
 ```
 
-## Demo entry points
+## Deployment
 
-### Public
+The repository contains:
 
-- `/` — registration opening page
-- `/register` — six-step participant registration
-- `/registration-success` — generated identifiers and copy/print actions
-- `/lookup` — secure registration number + private code entry
-- `/lookup/record` — participant-safe result view
+- `.nvmrc` — Node 22
+- `.npmrc` — public npm registry and CI-friendly settings
+- `packageManager` — npm 10.9.2
+- `vercel.json` — deterministic Vercel install/build commands
+- `netlify.toml` — Node/npm versions; Netlify applies its current OpenNext adapter automatically
 
-### Staff
+Keep `package.json`, `package-lock.json`, `.npmrc`, `.nvmrc`, `vercel.json` and `netlify.toml` at the repository root.
 
-- `/staff/login` — prefilled demo sign-in
-- `/staff/dashboard`
-- `/staff/participants`
-- `/staff/participants/1`
-- `/staff/screenings/1`
-- `/staff/referrals-followups`
-- `/staff/change-password`
+## Security boundaries
 
-### Admin
+- `SUPABASE_SERVICE_ROLE_KEY`, `RESEND_API_KEY` and `LOOKUP_CODE_PEPPER` are server-only secrets.
+- Never prefix them with `NEXT_PUBLIC_`.
+- Do not store secrets in GitHub.
+- The supplied database migration enables RLS and denies direct anonymous table access.
+- The public lookup response excludes internal notes, staff identity and audit metadata.
+- Excel exports exclude passwords and lookup-code plaintext.
 
-- `/admin/login` — prefilled demo sign-in
-- `/admin/dashboard`
-- `/admin/participants`
-- `/admin/screenings`
-- `/admin/referrals-followups`
-- `/admin/referral-hospitals`
-- `/admin/staff`
-- `/admin/export`
-- `/admin/change-password`
+## Production approval
 
-## Working prototype operations
-
-- `POST /api/register` validates the core payload and returns a demo registration number and cryptographically random lookup code.
-- `GET /api/admin/export` generates a real Excel workbook with Participants, Screenings, Referrals, Follow-ups, Complete Records, Staff Activity and Export Info sheets.
-- The public registration draft is retained in `sessionStorage` during the active browser session.
-- Staff/admin tables, filters, forms, modals, status controls and notification feedback are interactive mock workflows.
-
-## Production connection checklist
-
-1. Replace `components/brand.tsx` with the approved official BUA and Zendale artwork.
-2. Add Supabase/PostgreSQL schema, migrations, RLS policies and approved geographic region.
-3. Replace demo portal authentication with Supabase Auth or the approved identity provider.
-4. Store only a strong hash of the private lookup code and add a server-side pepper.
-5. Implement database sequences for registration numbers and Staff IDs.
-6. Add transactional registration/credential/result email adapters and delivery webhooks.
-7. Add endpoint-specific rate limits, generic authentication failures and temporary lockouts.
-8. Add immutable audit events, data-retention rules, backups and incident monitoring.
-9. Obtain clinical, privacy, legal and information-security approval before processing real health information.
-
-## Design notes
-
-The visual system uses a calm healthcare palette: deep navy for authority, teal for care and progress, warm gold for attention, and high-contrast off-white surfaces. The public journey intentionally has no marketing navigation. Yes/No consent controls are neutral and never preselected. Motion respects the operating system's reduced-motion preference.
+This source implements technical safeguards but does not replace BUA/Zendale clinical, legal, privacy, retention, incident-response and information-security approval. Complete those reviews before collecting real health information.

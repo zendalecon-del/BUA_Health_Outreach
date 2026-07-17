@@ -1,30 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "motion/react";
-import {
-  Activity,
-  ArrowLeft,
-  ArrowRight,
-  CalendarDays,
-  Check,
-  CheckCircle2,
-  ClipboardCheck,
-  DoorOpen,
-  Hospital,
-  LoaderCircle,
-  Save,
-  ShieldCheck,
-  Stethoscope,
-} from "lucide-react";
+import { Activity, ArrowLeft, ArrowRight, CalendarDays, Check, ClipboardCheck, Hospital, LoaderCircle, Save, ShieldCheck, Stethoscope } from "lucide-react";
 import { toast } from "sonner";
 import { PortalShell } from "@/components/portal-shell";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
@@ -32,152 +17,59 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
-import { hospitals, participants } from "@/lib/mock-data";
 
-const screeningSteps = [
-  { title: "Measurements", description: "Package delivered and objective screening measurements.", icon: Activity },
-  { title: "Clinical review", description: "Record the consultation and clinical decisions.", icon: Stethoscope },
-  { title: "Referral & follow-up", description: "Complete only the sections triggered by the clinical review.", icon: Hospital },
-  { title: "Review & complete", description: "Confirm every value before formally completing the screening.", icon: ClipboardCheck },
+const steps = [
+  { title: "Measurements", icon: Activity, description: "Package delivered and objective screening measurements." },
+  { title: "Clinical review", icon: Stethoscope, description: "Doctor consultation and clinical decisions." },
+  { title: "Referral and follow-up", icon: Hospital, description: "Complete only the sections triggered by the review." },
+  { title: "Review and complete", icon: ClipboardCheck, description: "Confirm every value before formal completion." },
 ];
 
-const initial = {
-  package: "Comprehensive Package",
-  systolic: "124",
-  diastolic: "81",
-  bloodSugar: "5.8",
-  date: "2026-07-17",
-  doctorSeen: "Yes",
-  clinicalNote: "Participant reports occasional headaches after long work shifts. No acute distress observed.",
-  referralRequired: "Yes",
-  followUpRequired: "Yes",
-  hospital: "Zendale Medical Centre",
-  referralReason: "Review of blood pressure history and medication response.",
-  referralInstruction: "Please contact the selected facility within seven days for a medical review.",
-  urgency: "Within 7 days",
-  participantInformed: "Yes",
-  followUpReason: "Repeat blood-pressure measurement after rest and medication review.",
-  followUpDate: "2026-07-24",
-  followUpInstruction: "Return for a repeat blood-pressure check and bring current medication details.",
-};
+type Props = { mode: "staff" | "admin"; profile: { full_name: string; staff_id: string; role: string }; participant: any; hospitals: any[] };
 
-type ScreeningData = typeof initial;
+function Field({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) { return <div className="space-y-2.5"><div className="flex items-baseline justify-between gap-3"><Label className="text-sm font-semibold text-[#2b3038]">{label}{required && <span className="ml-1 text-[var(--bua-red)]">*</span>}</Label>{hint && <span className="text-xs text-[#7c828b]">{hint}</span>}</div>{children}</div>; }
+function YesNo({ value, onChange, name }: { value: string; onChange: (value: string) => void; name: string }) { return <RadioGroup value={value} onValueChange={onChange} className="grid grid-cols-2 gap-2">{["Yes","No"].map((option) => <Label key={option} htmlFor={`${name}-${option}`} className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#ded9cf] bg-white p-3.5 font-semibold has-[[data-state=checked]]:border-[var(--zendale-blue)] has-[[data-state=checked]]:bg-[#f4f7fb] has-[[data-state=checked]]:text-[var(--zendale-blue)]"><RadioGroupItem id={`${name}-${option}`} value={option}/>{option}</Label>)}</RadioGroup>; }
+function Summary({ label, value, internal = false }: { label: string; value: React.ReactNode; internal?: boolean }) { return <div className="grid gap-1 border-b border-[#ece8e0] py-3.5 last:border-0 sm:grid-cols-[180px_1fr]"><p className="text-[10px] font-black uppercase tracking-[.1em] text-[#858b94]">{label}{internal && <span className="ml-2 rounded-full bg-[#efede8] px-2 py-0.5 text-[9px]">Internal</span>}</p><div className="text-sm font-semibold leading-6 text-[#343a43]">{value || "—"}</div></div>; }
 
-function Field({ label, required, hint, children }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
-  return <div className="space-y-2.5"><div className="flex items-baseline justify-between gap-3"><Label>{label}{required && <span className="ml-1 text-[#c64b58]">*</span>}</Label>{hint && <span className="text-xs text-[#72868c]">{hint}</span>}</div>{children}</div>;
-}
-
-function BinaryChoice({ value, onChange, name }: { value: string; onChange: (value: string) => void; name: string }) {
-  return <RadioGroup value={value} onValueChange={onChange} className="grid grid-cols-2 gap-2">{["Yes", "No"].map((option) => <Label key={option} htmlFor={`${name}-${option}`} className="flex cursor-pointer items-center justify-center gap-2 rounded-xl border border-[#d7e4e1] bg-white p-3.5 font-semibold transition hover:border-[#acd0ca] has-[[data-state=checked]]:border-[var(--primary)] has-[[data-state=checked]]:bg-[#eff9f6] has-[[data-state=checked]]:text-[var(--primary)]"><RadioGroupItem id={`${name}-${option}`} value={option} />{option}</Label>)}</RadioGroup>;
-}
-
-function SummaryRow({ label, value, privateNote = false }: { label: string; value: React.ReactNode; privateNote?: boolean }) {
-  return <div className="grid gap-1 border-b border-[#e2ebe9] py-3 last:border-0 sm:grid-cols-[170px_1fr]"><p className="text-xs font-bold uppercase tracking-[0.08em] text-[#71868c]">{label}{privateNote && <Badge variant="secondary" className="ml-2 align-middle">Internal</Badge>}</p><div className="text-sm font-semibold leading-6 text-[#2a4851]">{value || "—"}</div></div>;
-}
-
-export function ScreeningForm({ mode, id }: { mode: "staff" | "admin"; id: string }) {
+export function ScreeningForm({ mode, profile, participant, hospitals }: Props) {
   const router = useRouter();
-  const participant = participants.find((item) => item.id === id) ?? participants[0];
+  const existing = Array.isArray(participant.screenings) ? participant.screenings[0] : participant.screenings;
+  const referral = existing && Array.isArray(existing.referrals) ? existing.referrals[0] : existing?.referrals;
+  const followUp = existing && Array.isArray(existing.follow_ups) ? existing.follow_ups[0] : existing?.follow_ups;
   const [step, setStep] = useState(0);
-  const [data, setData] = useState<ScreeningData>(initial);
-  const [completeOpen, setCompleteOpen] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [completing, setCompleting] = useState(false);
-
-  const update = <K extends keyof ScreeningData>(key: K, value: ScreeningData[K]) => setData((current) => ({ ...current, [key]: value }));
-  const progress = ((step + 1) / screeningSteps.length) * 100;
-  const current = screeningSteps[step];
-
-  const validation = useMemo(() => {
-    if (step === 0 && (!data.package || !data.systolic || !data.diastolic || !data.bloodSugar || !data.date)) return "Complete all required measurement fields.";
-    if (step === 1 && (!data.doctorSeen || !data.referralRequired || !data.followUpRequired)) return "Complete all clinical decision fields.";
-    if (step === 2 && data.referralRequired === "Yes" && (!data.hospital || !data.referralReason || !data.referralInstruction || !data.urgency || !data.participantInformed)) return "Complete all required referral fields.";
-    if (step === 2 && data.followUpRequired === "Yes" && (!data.followUpReason || !data.followUpDate || !data.followUpInstruction)) return "Complete all required follow-up fields.";
+  const [data, setData] = useState({
+    screeningPackage: existing?.screening_package || participant.requested_service || "Free Wellness Screening",
+    systolic: existing?.systolic?.toString() || "", diastolic: existing?.diastolic?.toString() || "", randomBloodSugar: existing?.random_blood_sugar?.toString() || "",
+    screeningDate: existing?.screening_date || new Date().toISOString().slice(0,10), doctorSeen: existing?.doctor_seen === true ? "Yes" : existing?.doctor_seen === false ? "No" : "",
+    clinicalNote: existing?.clinical_note || "", referralRequired: existing?.referral_required ? "Yes" : "No", followUpRequired: existing?.follow_up_required ? "Yes" : "No",
+    referralHospitalId: referral?.referral_hospital_id || "", referralReason: referral?.reason || "", referralInstruction: referral?.participant_instruction || "", urgency: referral?.urgency || "Routine", participantInformed: referral?.participant_informed ? "Yes" : "No",
+    followUpReason: followUp?.reason || "", followUpDate: followUp?.suggested_date || "", followUpInstruction: followUp?.participant_instruction || "",
+  });
+  const update = (key: keyof typeof data, value: string) => setData((current) => ({ ...current, [key]: value }));
+  const error = useMemo(() => {
+    if (step === 0 && (!data.screeningPackage || !data.systolic || !data.diastolic || !data.randomBloodSugar || !data.screeningDate)) return "Complete every required measurement field.";
+    if (step === 1 && (!data.doctorSeen || !data.referralRequired || !data.followUpRequired)) return "Complete every clinical decision field.";
+    if (step === 2 && data.referralRequired === "Yes" && (!data.referralHospitalId || !data.referralReason || !data.referralInstruction || !data.urgency || !data.participantInformed)) return "Complete every required referral field.";
+    if (step === 2 && data.followUpRequired === "Yes" && (!data.followUpReason || !data.followUpInstruction)) return "Complete every required follow-up field.";
     return "";
   }, [data, step]);
-
-  const save = async (exit = false) => {
+  const submit = async (action: "save" | "complete" | "update") => {
+    if (action !== "save" && error) return toast.error(error);
     setSaving(true);
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setSaving(false);
-    toast.success(exit ? "Screening saved. You can resume later." : "Screening draft saved.");
-    if (exit) router.push(`/${mode}/participants/${participant.id}`);
+    try {
+      const response = await fetch("/api/staff/screenings", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ participantId: participant.id, screeningPackage: data.screeningPackage, systolic: data.systolic, diastolic: data.diastolic, randomBloodSugar: data.randomBloodSugar, screeningDate: data.screeningDate, doctorSeen: data.doctorSeen === "Yes", clinicalNote: data.clinicalNote, referralRequired: data.referralRequired === "Yes", followUpRequired: data.followUpRequired === "Yes", referralHospitalId: data.referralHospitalId || null, referralReason: data.referralReason, referralInstruction: data.referralInstruction, urgency: data.referralRequired === "Yes" ? data.urgency : null, participantInformed: data.referralRequired === "Yes" ? data.participantInformed === "Yes" : null, followUpReason: data.followUpReason, followUpDate: data.followUpDate || null, followUpInstruction: data.followUpInstruction, action }) });
+      const result = await response.json(); if (!response.ok) throw new Error(result.error || "The screening could not be saved.");
+      toast.success(action === "save" ? "Screening draft saved." : action === "complete" ? "Screening completed." : "Screening updated.");
+      router.push(`/${mode}/participants/${participant.id}`); router.refresh();
+    } catch (err) { toast.error(err instanceof Error ? err.message : "The screening could not be saved."); setSaving(false); }
   };
-
-  const next = () => {
-    if (validation) { toast.error(validation); return; }
-    setStep((value) => Math.min(value + 1, 3));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const complete = async () => {
-    setCompleting(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    toast.success("Screening completed and locked for ordinary editing.");
-    router.push(`/${mode}/participants/${participant.id}`);
-  };
-
   const content = [
-    <div key="measurements" className="grid gap-5 sm:grid-cols-2">
-      <div className="sm:col-span-2"><Field label="Registration number"><Input value={participant.reg} disabled /></Field></div>
-      <div className="sm:col-span-2"><Field label="Screening package delivered" required><Select value={data.package} onValueChange={(value) => update("package", value)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Free Wellness Screening", "Standard Package", "Comprehensive Package", "Doctor Consultation Only"].map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent></Select></Field></div>
-      <Field label="Blood pressure" required hint="mmHg"><div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2"><Input type="number" value={data.systolic} onChange={(event) => update("systolic", event.target.value)} placeholder="Systolic" /><span className="font-bold text-[#71868c]">/</span><Input type="number" value={data.diastolic} onChange={(event) => update("diastolic", event.target.value)} placeholder="Diastolic" /></div><p className="text-xs text-[#72868c]">Displayed as {data.systolic || "—"} / {data.diastolic || "—"} mmHg</p></Field>
-      <Field label="Random blood sugar" required hint="mmol/L"><div className="relative"><Input type="number" step="0.1" value={data.bloodSugar} onChange={(event) => update("bloodSugar", event.target.value)} className="pr-20" /><span className="absolute right-4 top-1/2 -translate-y-1/2 text-xs font-bold text-[#71868c]">mmol/L</span></div></Field>
-      <Field label="Screening date" required><Input type="date" value={data.date} onChange={(event) => update("date", event.target.value)} /></Field>
-      <Field label="Staff identity"><Input value="Kemi Lawal · BUA-STF-002" disabled /></Field>
-      <div className="sm:col-span-2"><Alert><ShieldCheck className="absolute left-4 top-4 size-5 text-[var(--primary)]" /><AlertTitle className="pl-7">Measurement validation supports, but does not diagnose</AlertTitle><AlertDescription className="pl-7">The system may flag implausible entry ranges to catch typing errors. It must not make a clinical diagnosis.</AlertDescription></Alert></div>
-    </div>,
-
-    <div key="clinical" className="space-y-6">
-      <Card className="border-[#d8e6e2] p-5 shadow-sm"><Field label="Was the participant seen by a doctor?" required><BinaryChoice name="doctor-seen" value={data.doctorSeen} onChange={(value) => update("doctorSeen", value)} /></Field></Card>
-      <Field label="Clinical observation / internal note" hint="Not visible to participant"><Textarea value={data.clinicalNote} onChange={(event) => update("clinicalNote", event.target.value)} placeholder="Record concise, factual internal observations" className="min-h-36" /></Field>
-      <div className="grid gap-5 sm:grid-cols-2">
-        <Card className="border-[#d8e6e2] p-5 shadow-sm"><Field label="Referral required?" required><p className="mb-3 text-xs leading-5 text-[#71868c]">Selecting Yes reveals referral details on the next step.</p><BinaryChoice name="referral-required" value={data.referralRequired} onChange={(value) => update("referralRequired", value)} /></Field></Card>
-        <Card className="border-[#d8e6e2] p-5 shadow-sm"><Field label="Follow-up required?" required><p className="mb-3 text-xs leading-5 text-[#71868c]">Selecting Yes reveals a calendar date and instruction fields.</p><BinaryChoice name="follow-up-required" value={data.followUpRequired} onChange={(value) => update("followUpRequired", value)} /></Field></Card>
-      </div>
-    </div>,
-
-    <div key="referral" className="space-y-6">
-      {data.referralRequired === "Yes" ? <Card className="overflow-hidden border-[#e3d5b8] shadow-sm"><div className="flex items-center gap-3 border-b border-[#eadfc8] bg-[#fffaf0] p-5"><div className="grid size-10 place-items-center rounded-xl bg-[#faeacb] text-[#966619]"><Hospital className="size-5" /></div><div><h3 className="font-bold text-[var(--navy)]">Referral details</h3><p className="mt-1 text-xs text-[#746d5d]">Required because Referral Required = Yes</p></div></div><div className="grid gap-5 p-5 sm:p-6"><Field label="Referral hospital" required><Select value={data.hospital} onValueChange={(value) => update("hospital", value)}><SelectTrigger><SelectValue placeholder="Select active referral hospital" /></SelectTrigger><SelectContent>{hospitals.filter((item) => item.status === "Active").map((item) => <SelectItem key={item.id} value={item.name}>{item.name} · {item.specialty}</SelectItem>)}</SelectContent></Select></Field><Field label="Referral reason" required><Textarea value={data.referralReason} onChange={(event) => update("referralReason", event.target.value)} /></Field><Field label="Participant-facing instruction" required><Textarea value={data.referralInstruction} onChange={(event) => update("referralInstruction", event.target.value)} /></Field><div className="grid gap-5 sm:grid-cols-2"><Field label="Urgency" required><Select value={data.urgency} onValueChange={(value) => update("urgency", value)}><SelectTrigger><SelectValue /></SelectTrigger><SelectContent>{["Routine", "Within 7 days", "Urgent"].map((item) => <SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent></Select></Field><Field label="Participant informed?" required><BinaryChoice name="participant-informed" value={data.participantInformed} onChange={(value) => update("participantInformed", value)} /></Field></div></div></Card> : <Alert><AlertTitle>No referral required</AlertTitle><AlertDescription>The referral section is hidden because the clinical decision is No.</AlertDescription></Alert>}
-      {data.followUpRequired === "Yes" ? <Card className="overflow-hidden border-[#d6e6e2] shadow-sm"><div className="flex items-center gap-3 border-b border-[#dfeae8] bg-[#f6fbf9] p-5"><div className="grid size-10 place-items-center rounded-xl bg-[#e2f3ef] text-[var(--primary)]"><CalendarDays className="size-5" /></div><div><h3 className="font-bold text-[var(--navy)]">Follow-up details</h3><p className="mt-1 text-xs text-[#71868c]">Required because Follow-up Required = Yes</p></div></div><div className="grid gap-5 p-5 sm:p-6"><Field label="Follow-up reason" required><Textarea value={data.followUpReason} onChange={(event) => update("followUpReason", event.target.value)} /></Field><Field label="Suggested follow-up date" required><Input type="date" value={data.followUpDate} onChange={(event) => update("followUpDate", event.target.value)} /></Field><Field label="Participant-facing follow-up instruction" required><Textarea value={data.followUpInstruction} onChange={(event) => update("followUpInstruction", event.target.value)} /></Field></div></Card> : <Alert><AlertTitle>No follow-up required</AlertTitle><AlertDescription>The follow-up section is hidden because the clinical decision is No.</AlertDescription></Alert>}
-    </div>,
-
-    <div key="review" className="space-y-5">
-      <Alert className="border-[#e1d7bb] bg-[#fffaf0] text-[#5f5437]"><ShieldCheck className="absolute left-4 top-4 size-5 text-[#9b701f]" /><AlertTitle className="pl-7">Completion is a formal action</AlertTitle><AlertDescription className="pl-7">After completion, the record becomes read-only. Future corrections must use the explicit Edit Screening workflow and will change the status to Updated.</AlertDescription></Alert>
-      <Card className="p-5 shadow-sm"><div className="mb-2 flex items-center justify-between"><h3 className="font-bold text-[var(--navy)]">Measurements</h3><Button variant="ghost" size="sm" onClick={() => setStep(0)}>Edit</Button></div><SummaryRow label="Package delivered" value={data.package} /><SummaryRow label="Blood pressure" value={`${data.systolic} / ${data.diastolic} mmHg`} /><SummaryRow label="Random blood sugar" value={`${data.bloodSugar} mmol/L`} /><SummaryRow label="Screening date" value={data.date} /></Card>
-      <Card className="p-5 shadow-sm"><div className="mb-2 flex items-center justify-between"><h3 className="font-bold text-[var(--navy)]">Clinical review</h3><Button variant="ghost" size="sm" onClick={() => setStep(1)}>Edit</Button></div><SummaryRow label="Doctor seen" value={data.doctorSeen} /><SummaryRow label="Clinical note" value={data.clinicalNote} privateNote /><SummaryRow label="Referral required" value={data.referralRequired} /><SummaryRow label="Follow-up required" value={data.followUpRequired} /></Card>
-      {(data.referralRequired === "Yes" || data.followUpRequired === "Yes") && <Card className="p-5 shadow-sm"><div className="mb-2 flex items-center justify-between"><h3 className="font-bold text-[var(--navy)]">Referral & follow-up</h3><Button variant="ghost" size="sm" onClick={() => setStep(2)}>Edit</Button></div>{data.referralRequired === "Yes" && <><SummaryRow label="Hospital" value={data.hospital} /><SummaryRow label="Urgency" value={data.urgency} /><SummaryRow label="Referral instruction" value={data.referralInstruction} /></>}{data.followUpRequired === "Yes" && <><SummaryRow label="Follow-up date" value={data.followUpDate} /><SummaryRow label="Instruction" value={data.followUpInstruction} /></>}</Card>}
-    </div>,
+    <div key="measure" className="grid gap-5 sm:grid-cols-2"><div className="sm:col-span-2"><Field label="Registration number"><Input value={participant.registration_number} disabled/></Field></div><div className="sm:col-span-2"><Field label="Screening package delivered" required><Select value={data.screeningPackage} onValueChange={(v)=>update("screeningPackage",v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{["Free Wellness Screening","Standard Package","Comprehensive Package","Doctor Consultation Only"].map((item)=><SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent></Select></Field></div><Field label="Blood pressure" required hint="mmHg"><div className="grid grid-cols-[1fr_auto_1fr] items-center gap-2"><Input type="number" value={data.systolic} onChange={(e)=>update("systolic",e.target.value)} placeholder="Systolic"/><span className="font-bold text-[#858b94]">/</span><Input type="number" value={data.diastolic} onChange={(e)=>update("diastolic",e.target.value)} placeholder="Diastolic"/></div></Field><Field label="Random blood sugar" required hint="mmol/L"><Input type="number" step="0.1" value={data.randomBloodSugar} onChange={(e)=>update("randomBloodSugar",e.target.value)}/></Field><Field label="Screening date" required><Input type="date" value={data.screeningDate} onChange={(e)=>update("screeningDate",e.target.value)}/></Field><Field label="Staff identity"><Input value={`${profile.full_name} · ${profile.staff_id}`} disabled/></Field><div className="sm:col-span-2"><Alert><ShieldCheck className="absolute left-4 top-4 size-5 text-[var(--zendale-blue)]"/><AlertTitle className="pl-7">Validation supports accurate entry</AlertTitle><AlertDescription className="pl-7">Range checks can detect likely typing mistakes. The system does not make a diagnosis.</AlertDescription></Alert></div></div>,
+    <div key="clinical" className="space-y-6"><Card className="p-5 shadow-sm"><Field label="Was the participant seen by a doctor?" required><YesNo name="doctor" value={data.doctorSeen} onChange={(v)=>update("doctorSeen",v)}/></Field></Card><Field label="Clinical observation / internal note" hint="Never shown in participant lookup"><Textarea value={data.clinicalNote} onChange={(e)=>update("clinicalNote",e.target.value)} className="min-h-36" placeholder="Record concise and factual internal observations"/></Field><div className="grid gap-5 sm:grid-cols-2"><Card className="p-5 shadow-sm"><Field label="Referral required?" required><YesNo name="referral" value={data.referralRequired} onChange={(v)=>update("referralRequired",v)}/></Field></Card><Card className="p-5 shadow-sm"><Field label="Follow-up required?" required><YesNo name="followup" value={data.followUpRequired} onChange={(v)=>update("followUpRequired",v)}/></Field></Card></div></div>,
+    <div key="actions" className="space-y-6">{data.referralRequired === "Yes" ? <Card className="space-y-5 border-[#ead9a0] bg-[#fffdf7] p-5"><div className="flex items-center gap-3"><Hospital className="size-5 text-[#8a5a00]"/><h3 className="font-bold">Referral details</h3></div><Field label="Referral hospital" required><Select value={data.referralHospitalId} onValueChange={(v)=>update("referralHospitalId",v)}><SelectTrigger><SelectValue placeholder="Select an active hospital"/></SelectTrigger><SelectContent>{hospitals.map((h)=><SelectItem key={h.id} value={h.id}>{h.name}{h.department_specialty ? ` · ${h.department_specialty}` : ""}</SelectItem>)}</SelectContent></Select></Field><Field label="Referral reason" required><Textarea value={data.referralReason} onChange={(e)=>update("referralReason",e.target.value)}/></Field><Field label="Participant instruction" required><Textarea value={data.referralInstruction} onChange={(e)=>update("referralInstruction",e.target.value)}/></Field><div className="grid gap-5 sm:grid-cols-2"><Field label="Urgency" required><Select value={data.urgency} onValueChange={(v)=>update("urgency",v)}><SelectTrigger><SelectValue/></SelectTrigger><SelectContent>{["Routine","Within 7 days","Urgent"].map((item)=><SelectItem key={item} value={item}>{item}</SelectItem>)}</SelectContent></Select></Field><Field label="Participant informed?" required><YesNo name="informed" value={data.participantInformed} onChange={(v)=>update("participantInformed",v)}/></Field></div></Card> : <Card className="border-dashed p-5 text-sm text-[#717882]">Referral fields are hidden because Referral Required is No.</Card>}{data.followUpRequired === "Yes" ? <Card className="space-y-5 p-5"><div className="flex items-center gap-3"><CalendarDays className="size-5 text-[#157347]"/><h3 className="font-bold">Follow-up details</h3></div><Field label="Follow-up reason" required><Textarea value={data.followUpReason} onChange={(e)=>update("followUpReason",e.target.value)}/></Field><Field label="Suggested follow-up date"><Input type="date" value={data.followUpDate} onChange={(e)=>update("followUpDate",e.target.value)}/></Field><Field label="Participant instruction" required><Textarea value={data.followUpInstruction} onChange={(e)=>update("followUpInstruction",e.target.value)}/></Field></Card> : <Card className="border-dashed p-5 text-sm text-[#717882]">Follow-up fields are hidden because Follow-up Required is No.</Card>}</div>,
+    <div key="review" className="space-y-5"><Card className="px-5 shadow-sm"><Summary label="Participant" value={`${participant.full_name} · ${participant.registration_number}`}/><Summary label="Package" value={data.screeningPackage}/><Summary label="Blood pressure" value={`${data.systolic || "—"} / ${data.diastolic || "—"} mmHg`}/><Summary label="Random blood sugar" value={data.randomBloodSugar ? `${data.randomBloodSugar} mmol/L` : "—"}/><Summary label="Doctor seen" value={data.doctorSeen}/><Summary label="Clinical note" value={data.clinicalNote} internal/><Summary label="Referral" value={data.referralRequired === "Yes" ? `${hospitals.find((h)=>h.id===data.referralHospitalId)?.name || "Hospital not selected"} · ${data.urgency}` : "Not required"}/><Summary label="Follow-up" value={data.followUpRequired === "Yes" ? `${data.followUpDate || "Date not set"} · ${data.followUpInstruction}` : "Not required"}/></Card><Alert className="border-[#f0cbd1] bg-[#fff7f8] text-[#6f2430]"><AlertTitle>Formal completion locks ordinary editing</AlertTitle><AlertDescription>After completion, the record opens read-only. An authorised correction changes the status to Updated and preserves the original completion metadata.</AlertDescription></Alert></div>,
   ];
-
-  return (
-    <PortalShell mode={mode} title={`${participant.name} · Screening`} description={`${participant.reg} · Draft saves do not complete the screening.`} action={<Button variant="outline" onClick={() => save(true)} disabled={saving}><DoorOpen /> Save & exit</Button>}>
-      <div className="grid gap-6 xl:grid-cols-[250px_1fr]">
-        <Card className="h-fit border-white p-3 shadow-sm xl:sticky xl:top-28">
-          <div className="p-3"><p className="text-xs font-bold uppercase tracking-[0.1em] text-[#71868c]">Screening progress</p><div className="mt-3 flex items-center justify-between"><span className="text-2xl font-black text-[var(--navy)]">{Math.round(progress)}%</span><Badge variant="warning">In progress</Badge></div><Progress className="mt-3" value={progress} /></div>
-          <nav className="mt-2 space-y-1">
-            {screeningSteps.map((item, index) => { const Icon = item.icon; const active = index === step; const complete = index < step; return <button key={item.title} type="button" disabled={index > step} onClick={() => index <= step && setStep(index)} className={cn("flex w-full items-center gap-3 rounded-xl p-3 text-left text-sm font-semibold transition", active && "bg-[var(--navy)] text-white", complete && "text-[#23645f] hover:bg-[#edf7f5]", index > step && "cursor-not-allowed text-[#9aa9ad]")}><span className={cn("grid size-8 shrink-0 place-items-center rounded-lg", active ? "bg-white/12" : complete ? "bg-[#dff5ef]" : "bg-[#edf2f1]")}>{complete ? <Check className="size-4" /> : <Icon className="size-4" />}</span><span>{item.title}</span></button>; })}
-          </nav>
-          <div className="mt-3 rounded-xl bg-[#f1f7f5] p-3 text-xs leading-5 text-[#647b81]"><Save className="mb-2 size-4 text-[var(--primary)]" />Use Save draft at any time. Completion is available only on the final step.</div>
-        </Card>
-
-        <Card className="overflow-hidden border-white shadow-sm">
-          <div className="border-b border-[#e0e9e7] bg-[#fbfdfc] p-5 sm:p-6"><div className="flex items-start gap-4"><div className="grid size-11 shrink-0 place-items-center rounded-2xl bg-[#e5f5f1] text-[var(--primary)]"><current.icon /></div><div><p className="text-xs font-black uppercase tracking-[0.1em] text-[var(--primary)]">Step {step + 1} of 4</p><h2 className="mt-1 text-xl font-bold tracking-[-0.03em] text-[var(--navy)]">{current.title}</h2><p className="mt-1 text-sm leading-6 text-[#6c8187]">{current.description}</p></div></div></div>
-          <div className="p-5 sm:p-7"><AnimatePresence mode="wait"><motion.div key={step} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -12 }}>{content[step]}</motion.div></AnimatePresence></div>
-          <div className="flex flex-col-reverse gap-3 border-t border-[#e0e9e7] bg-[#fbfdfc] p-5 sm:flex-row sm:items-center sm:justify-between sm:px-7">
-            <Button variant="outline" disabled={step === 0 || saving || completing} onClick={() => setStep((value) => value - 1)}><ArrowLeft /> Back</Button>
-            <div className="flex flex-col-reverse gap-3 sm:flex-row sm:items-center"><Button variant="ghost" onClick={() => save(false)} disabled={saving || completing}>{saving ? <LoaderCircle className="animate-spin" /> : <Save />} Save draft</Button>{step < 3 ? <Button onClick={next}>Save & continue <ArrowRight /></Button> : <Button onClick={() => setCompleteOpen(true)}><CheckCircle2 /> Complete screening</Button>}</div>
-          </div>
-        </Card>
-      </div>
-
-      <Dialog open={completeOpen} onOpenChange={setCompleteOpen}>
-        <DialogContent>
-          <DialogHeader><div className="mb-2 grid size-12 place-items-center rounded-2xl bg-[#e4f5f1] text-[var(--primary)]"><CheckCircle2 className="size-6" /></div><DialogTitle>Complete this screening?</DialogTitle><DialogDescription>All required information will be formally submitted. The screening will become read-only and the referral/follow-up queue will update automatically.</DialogDescription></DialogHeader>
-          <div className="rounded-xl border border-[#e2d8bd] bg-[#fffaf0] p-3 text-xs leading-5 text-[#6b5c3a]">Corrections after completion must use Edit Screening and will preserve the original completion date and staff identity.</div>
-          <DialogFooter><Button variant="outline" onClick={() => setCompleteOpen(false)} disabled={completing}>Review again</Button><Button onClick={complete} disabled={completing}>{completing ? <><LoaderCircle className="animate-spin" /> Completing…</> : <><CheckCircle2 /> Confirm completion</>}</Button></DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </PortalShell>
-  );
+  const action = existing?.status === "completed" || existing?.status === "updated" ? "update" : "complete";
+  return <PortalShell mode={mode} profile={profile} title={existing ? "Screening record" : "Start screening"} description={`${participant.full_name} · ${participant.registration_number}`} action={<Button asChild variant="outline"><Link href={`/${mode}/participants/${participant.id}`}><ArrowLeft/> Participant profile</Link></Button>}><Card className="overflow-hidden shadow-sm"><div className="border-b border-[#e8e3db] bg-[#faf9f6] p-5 sm:p-6"><div className="mb-4 flex items-center justify-between"><div><p className="text-xs font-black uppercase tracking-[.12em] text-[var(--bua-red)]">Step {step+1} of 4</p><p className="mt-1 text-sm font-semibold text-[#555d68]">{steps[step].title}</p></div><span className="text-sm font-black">{Math.round(((step+1)/4)*100)}%</span></div><Progress value={((step+1)/4)*100}/><div className="no-scrollbar mt-5 flex gap-2 overflow-x-auto">{steps.map((item,index)=>{ const Icon=item.icon; return <button key={item.title} type="button" onClick={()=>index<=step&&setStep(index)} disabled={index>step} className={cn("flex shrink-0 items-center gap-2 rounded-xl px-3 py-2 text-xs font-semibold", index===step && "bg-[#17243a] text-white", index<step && "bg-[#eaf1fb] text-[#225f9d]", index>step && "text-[#a0a4aa]")}><span className="grid size-6 place-items-center rounded-lg bg-white/10">{index<step ? <Check className="size-3.5"/> : <Icon className="size-3.5"/>}</span>{item.title}</button>;})}</div></div><div className="p-5 sm:p-8"><AnimatePresence mode="wait"><motion.div key={step} initial={{opacity:0,y:10}} animate={{opacity:1,y:0}} exit={{opacity:0,y:-8}}>{content[step]}</motion.div></AnimatePresence>{error && <p className="mt-5 rounded-xl bg-[#fff1f3] px-4 py-3 text-sm font-semibold text-[#9d1729]">{error}</p>}<div className="mt-8 flex flex-col-reverse justify-between gap-3 border-t border-[#ece8df] pt-6 sm:flex-row"><div className="flex gap-2"><Button variant="outline" onClick={()=>setStep(Math.max(0,step-1))} disabled={step===0}><ArrowLeft/> Back</Button><Button variant="secondary" onClick={()=>submit("save")} disabled={saving}><Save/> Save & exit</Button></div>{step<3 ? <Button onClick={()=>{if(error)return toast.error(error);setStep(step+1);}}>Continue <ArrowRight/></Button> : <Button onClick={()=>submit(action)} disabled={saving}>{saving ? <><LoaderCircle className="animate-spin"/> Saving…</> : action === "update" ? "Save authorised update" : "Complete screening"}</Button>}</div></div></Card></PortalShell>;
 }

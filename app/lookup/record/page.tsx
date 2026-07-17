@@ -1,43 +1,34 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import { Activity, ArrowLeft, CalendarDays, CheckCircle2, HeartPulse, Hospital, Printer, ShieldCheck, Stethoscope } from "lucide-react";
+import { Activity, ArrowLeft, CalendarDays, CheckCircle2, Clock3, HeartPulse, Hospital, Printer, ShieldCheck, Stethoscope } from "lucide-react";
 import { PublicShell } from "@/components/public-shell";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
-function ResultMetric({ icon: Icon, label, value, note }: { icon: typeof Activity; label: string; value: string; note: string }) {
-  return <Card className="p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><div><p className="text-xs font-bold uppercase tracking-[0.1em] text-[#6d8389]">{label}</p><p className="mt-2 text-2xl font-black tracking-[-0.035em] text-[var(--navy)]">{value}</p><p className="mt-1 text-xs text-[#71868c]">{note}</p></div><div className="grid size-10 place-items-center rounded-xl bg-[#e4f5f1] text-[var(--primary)]"><Icon className="size-5" /></div></div></Card>;
+type RecordData = {
+  participantName: string;
+  registrationNumber: string;
+  registrationStatus: string;
+  screeningStatus: string;
+  resultAvailable: boolean;
+  results: null | { bloodPressure: string | null; bloodSugar: string | null; screeningDate: string | null; doctorSeen: boolean | null };
+  referral: null | { required: boolean; hospital: null | { name: string; department_specialty?: string; address?: string; phone?: string }; instruction: string; urgency: string; status: string };
+  followUp: null | { required: boolean; date: string | null; instruction: string; status: string };
+};
+
+function Metric({ icon: Icon, label, value, note }: { icon: typeof Activity; label: string; value: string; note?: string }) {
+  return <Card className="p-5 shadow-sm"><div className="flex items-start justify-between gap-4"><div><p className="text-[10px] font-black uppercase tracking-[.12em] text-[#7f858e]">{label}</p><p className="mt-2 text-2xl font-black tracking-[-.035em] text-[#20252c]">{value}</p>{note && <p className="mt-1 text-xs text-[#757c85]">{note}</p>}</div><div className="grid size-10 place-items-center rounded-xl bg-[#eaf1fb] text-[var(--zendale-blue)]"><Icon className="size-5" /></div></div></Card>;
 }
 
 export default function LookupRecordPage() {
-  return (
-    <PublicShell narrow>
-      <div className="pb-16 pt-5 sm:pt-10">
-        <div className="mb-5 flex flex-wrap items-center justify-between gap-3"><Button asChild variant="ghost" size="sm" className="-ml-3"><Link href="/lookup"><ArrowLeft /> New lookup</Link></Button><Button variant="outline" size="sm" onClick={() => window.print()}><Printer /> Print record</Button></div>
-        <Card className="card-shadow overflow-hidden border-white">
-          <div className="relative overflow-hidden bg-[var(--navy)] p-6 text-white sm:p-8">
-            <div className="shell-grid absolute inset-0 opacity-20" />
-            <div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-center">
-              <div><Badge className="mb-3 border-white/10 bg-white/10 text-white">Verified participant record</Badge><h1 className="text-3xl font-black tracking-[-0.045em]">John A.</h1><p className="mt-2 font-mono text-sm tracking-[0.08em] text-white/60">BUA-0047</p></div>
-              <div className="rounded-2xl border border-white/10 bg-white/8 p-4"><div className="flex items-center gap-3"><CheckCircle2 className="size-7 text-[#69d3c3]" /><div><p className="text-xs font-semibold uppercase tracking-[0.1em] text-white/45">Screening status</p><p className="mt-1 text-lg font-bold">Result available</p></div></div></div>
-            </div>
-          </div>
-          <div className="p-5 sm:p-8">
-            <div className="mb-6 flex items-center gap-3 rounded-2xl border border-[#cfe4df] bg-[#f1faf7] p-4"><ShieldCheck className="size-6 shrink-0 text-[var(--primary)]" /><div><p className="text-sm font-bold text-[#174440]">Only approved participant-facing information is shown here.</p><p className="mt-1 text-xs leading-5 text-[#657d82]">Internal clinical notes, staff identity and audit history are not included.</p></div></div>
-            <h2 className="text-lg font-bold tracking-[-0.02em] text-[var(--navy)]">Approved screening results</h2>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2"><ResultMetric icon={Activity} label="Blood pressure" value="124 / 81 mmHg" note="Recorded 17 Jul 2026" /><ResultMetric icon={HeartPulse} label="Random blood sugar" value="5.8 mmol/L" note="Recorded 17 Jul 2026" /></div>
-            <div className="mt-6 grid gap-4 lg:grid-cols-2">
-              <Card className="border-[#d4e5e1] p-5"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e8f1fb] text-[#2f6c9d]"><Stethoscope className="size-5" /></div><div><p className="text-sm font-bold text-[var(--navy)]">Doctor consultation</p><p className="mt-1 text-sm leading-6 text-[#647b82]">Completed during the outreach screening.</p></div></div></Card>
-              <Card className="border-[#eadabd] bg-[#fffaf1] p-5"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#fceac8] text-[#986515]"><Hospital className="size-5" /></div><div><div className="flex flex-wrap items-center gap-2"><p className="text-sm font-bold text-[var(--navy)]">Referral required</p><Badge variant="warning">Within 7 days</Badge></div><p className="mt-2 text-sm font-semibold text-[#4d6066]">Zendale Medical Centre · General Medicine</p><p className="mt-1 text-sm leading-6 text-[#6d7f83]">Please contact the facility with your registration number for the recommended review.</p></div></div></Card>
-            </div>
-            <Card className="mt-4 border-[#d6e5e1] p-5"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e8f5f1] text-[var(--primary)]"><CalendarDays className="size-5" /></div><div><p className="text-sm font-bold text-[var(--navy)]">Suggested follow-up</p><p className="mt-1 text-sm font-semibold text-[#445e65]">24 July 2026</p><p className="mt-1 text-sm leading-6 text-[#6c8086]">Return for a repeat blood-pressure check and bring any current medication details.</p></div></div></Card>
-            <Alert className="mt-6 border-[#e2d9be] bg-[#fffaf0] text-[#5e5437]"><AlertTitle>Important health notice</AlertTitle><AlertDescription>This outreach screening is preliminary and does not replace a comprehensive diagnosis, emergency care or consultation with your usual healthcare professional.</AlertDescription></Alert>
-          </div>
-        </Card>
-      </div>
-    </PublicShell>
-  );
+  const [record, setRecord] = useState<RecordData | null>(null);
+  useEffect(() => { try { const raw = sessionStorage.getItem("bua-lookup-record"); if (raw) setRecord(JSON.parse(raw)); } catch { /* ignore */ } }, []);
+  if (!record) return <PublicShell narrow><div className="mx-auto max-w-2xl py-20 text-center"><h1 className="text-3xl font-black">Secure lookup required</h1><p className="mt-3 text-[#69717b]">Enter your registration number and private lookup code first.</p><Button asChild className="mt-6"><Link href="/lookup">Open secure lookup</Link></Button></div></PublicShell>;
+
+  const statusLabel = record.resultAvailable ? "Result available" : record.screeningStatus === "in_progress" ? "Screening in progress" : "Not yet screened";
+  return <PublicShell narrow><div className="pb-16 pt-5 sm:pt-10"><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><Button asChild variant="ghost" size="sm" className="-ml-3"><Link href="/lookup"><ArrowLeft /> New lookup</Link></Button><Button variant="outline" size="sm" onClick={() => window.print()}><Printer /> Print record</Button></div><Card className="print-card card-shadow overflow-hidden border-[#ddd7cd]"><div className="relative overflow-hidden bg-[#17243a] p-6 text-white sm:p-8"><div className="brand-grid absolute inset-0 opacity-40"/><div className="relative flex flex-col justify-between gap-6 sm:flex-row sm:items-center"><div><Badge className="mb-3 border-white/10 bg-white/10 text-white">Verified participant record</Badge><h1 className="text-3xl font-black tracking-[-.045em]">{record.participantName}</h1><p className="mt-2 font-mono text-sm tracking-[.08em] text-white/60">{record.registrationNumber}</p></div><div className="rounded-2xl border border-white/10 bg-white/8 p-4"><div className="flex items-center gap-3">{record.resultAvailable ? <CheckCircle2 className="size-7 text-[#6dd39b]" /> : <Clock3 className="size-7 text-[#f3d66a]" />}<div><p className="text-[10px] font-black uppercase tracking-[.12em] text-white/45">Screening status</p><p className="mt-1 text-lg font-bold">{statusLabel}</p></div></div></div></div></div><div className="p-5 sm:p-8"><div className="mb-6 flex items-center gap-3 rounded-2xl border border-[#d8e2ef] bg-[#f4f7fb] p-4"><ShieldCheck className="size-6 shrink-0 text-[var(--zendale-blue)]" /><div><p className="text-sm font-bold text-[#25364b]">Only approved participant-facing information is shown here.</p><p className="mt-1 text-xs leading-5 text-[#69778a]">Internal clinical notes, staff identity and audit history are excluded.</p></div></div>{record.resultAvailable && record.results ? <><h2 className="text-lg font-bold tracking-[-.02em] text-[#20252c]">Approved screening results</h2><div className="mt-4 grid gap-4 sm:grid-cols-2"><Metric icon={Activity} label="Blood pressure" value={record.results.bloodPressure || "Not recorded"} note={record.results.screeningDate || undefined} /><Metric icon={HeartPulse} label="Random blood sugar" value={record.results.bloodSugar || "Not recorded"} note={record.results.screeningDate || undefined} /></div><Card className="mt-4 p-5"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#eaf1fb] text-[var(--zendale-blue)]"><Stethoscope className="size-5" /></div><div><p className="text-sm font-bold text-[#20252c]">Doctor consultation</p><p className="mt-1 text-sm leading-6 text-[#69717b]">{record.results.doctorSeen ? "Completed during the outreach screening." : "Not recorded as completed."}</p></div></div></Card></> : <Card className="border-dashed p-8 text-center"><Clock3 className="mx-auto size-8 text-[#a37b1d]"/><h2 className="mt-4 text-xl font-bold">Your approved result is not available yet</h2><p className="mt-2 text-sm leading-6 text-[#6c737d]">You can return to this page later using the same registration number and private lookup code.</p></Card>}{record.referral && <Card className="mt-4 border-[#ead9a0] bg-[#fff9e9] p-5"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#fff0c6] text-[#8a5a00]"><Hospital className="size-5" /></div><div><div className="flex flex-wrap items-center gap-2"><p className="text-sm font-bold text-[#20252c]">Referral required</p><Badge variant="warning">{record.referral.urgency}</Badge></div><p className="mt-2 text-sm font-semibold text-[#4f5864]">{record.referral.hospital?.name || "Referral facility to be confirmed"}{record.referral.hospital?.department_specialty ? ` · ${record.referral.hospital.department_specialty}` : ""}</p><p className="mt-1 text-sm leading-6 text-[#6d737b]">{record.referral.instruction}</p></div></div></Card>}{record.followUp && <Card className="mt-4 p-5"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e8f5ee] text-[#157347]"><CalendarDays className="size-5" /></div><div><p className="text-sm font-bold text-[#20252c]">Suggested follow-up</p><p className="mt-1 text-sm font-semibold text-[#4e5661]">{record.followUp.date || "Date to be confirmed"}</p><p className="mt-1 text-sm leading-6 text-[#6d747d]">{record.followUp.instruction}</p></div></div></Card>}<Alert className="mt-6 border-[#e8dcc2] bg-[#fffaf0] text-[#5e5437]"><AlertTitle>Important health notice</AlertTitle><AlertDescription>This outreach screening is preliminary and does not replace comprehensive diagnosis, emergency care or consultation with your usual healthcare professional.</AlertDescription></Alert></div></Card></div></PublicShell>;
 }

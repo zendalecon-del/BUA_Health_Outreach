@@ -1,21 +1,9 @@
 import Link from "next/link";
-import { Eye, Filter, Search, Stethoscope } from "lucide-react";
+import { ClipboardCheck } from "lucide-react";
+import { requirePortalProfile } from "@/lib/auth";
+import { getScreenings } from "@/lib/data/portal";
 import { PortalShell } from "@/components/portal-shell";
-import { StatusBadge } from "@/components/portal-widgets";
-import { Button } from "@/components/ui/button";
+import { EmptyState, StatusBadge } from "@/components/portal-widgets";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { participants } from "@/lib/mock-data";
-
-export default function AdminScreeningsPage() {
-  return (
-    <PortalShell mode="admin" title="Screening records" description="Review every screening lifecycle state, completion record and authorised update.">
-      <Card className="overflow-hidden border-white shadow-sm">
-        <div className="flex flex-col gap-3 border-b border-[#e0e9e7] p-5 sm:flex-row"><div className="relative flex-1"><Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-[#789097]" /><Input className="pl-10" placeholder="Search screening or participant…" /></div><Select defaultValue="all"><SelectTrigger className="w-full sm:w-48"><Filter className="mr-2 size-4" /><SelectValue /></SelectTrigger><SelectContent><SelectItem value="all">All statuses</SelectItem><SelectItem value="in-progress">In progress</SelectItem><SelectItem value="completed">Completed</SelectItem><SelectItem value="updated">Updated</SelectItem></SelectContent></Select></div>
-        <Table><TableHeader><TableRow><TableHead>Screening</TableHead><TableHead>Participant</TableHead><TableHead>Package delivered</TableHead><TableHead>Status</TableHead><TableHead>Completed / updated</TableHead><TableHead className="text-right">Action</TableHead></TableRow></TableHeader><TableBody>{participants.map((participant, index) => <TableRow key={participant.id}><TableCell><div className="flex items-center gap-3"><div className="grid size-9 place-items-center rounded-xl bg-[#e8f5f1] text-[var(--primary)]"><Stethoscope className="size-4" /></div><div><p className="font-mono text-xs font-bold text-[var(--primary)]">SCR-2026-{1047-index}</p><p className="mt-1 text-xs text-[#7a8e93]">{participant.reg}</p></div></div></TableCell><TableCell><p className="font-semibold text-[#173945]">{participant.name}</p><p className="mt-1 text-xs text-[#71868c]">{participant.department}</p></TableCell><TableCell className="text-sm text-[#506a71]">{participant.service}</TableCell><TableCell><StatusBadge status={participant.status} /></TableCell><TableCell className="text-xs leading-5 text-[#667d83]">{participant.status === "Not Started" ? "—" : participant.lastActivity}<br /><span className="text-[#8b9b9f]">{participant.status === "Updated" ? "Updated by admin" : "Dr. Ada Mensah"}</span></TableCell><TableCell className="text-right"><Button asChild variant="ghost" size="sm"><Link href={`/admin/screenings/${participant.id}`}><Eye /> Open</Link></Button></TableCell></TableRow>)}</TableBody></Table>
-      </Card>
-    </PortalShell>
-  );
-}
+export const dynamic="force-dynamic";
+export default async function Page(){const profile=await requirePortalProfile("admin");const screenings=await getScreenings();return <PortalShell mode="admin" profile={profile} title="Screening records" description="Read-only oversight of in-progress, completed and updated screening records."><Card className="overflow-hidden shadow-sm">{screenings.length?<div className="overflow-x-auto"><table className="w-full min-w-[900px] text-left"><thead><tr className="bg-[#faf9f6] text-[10px] font-black uppercase tracking-[.1em] text-[#7b818a]"><th className="px-5 py-3">Registration</th><th className="px-5 py-3">Participant</th><th className="px-5 py-3">Package</th><th className="px-5 py-3">Measurements</th><th className="px-5 py-3">Status</th><th className="px-5 py-3">Last activity</th><th className="px-5 py-3"></th></tr></thead><tbody className="divide-y divide-[#ece8e0]">{screenings.map((item:any)=>{const participant=Array.isArray(item.participants)?item.participants[0]:item.participants;return <tr key={item.id} className="hover:bg-[#faf9f6]"><td className="px-5 py-4 font-mono text-sm font-bold text-[#225f9d]">{participant?.registration_number}</td><td className="px-5 py-4"><p className="text-sm font-semibold">{participant?.full_name}</p><p className="mt-1 text-xs text-[#7b818a]">{participant?.department}</p></td><td className="px-5 py-4 text-sm text-[#58606a]">{item.screening_package}</td><td className="px-5 py-4 text-sm text-[#58606a]">{item.systolic&&item.diastolic?`${item.systolic}/${item.diastolic} mmHg`:"—"}{item.random_blood_sugar?` · ${item.random_blood_sugar} mmol/L`:""}</td><td className="px-5 py-4"><StatusBadge status={item.status}/></td><td className="px-5 py-4 text-xs text-[#7b818a]">{new Date(item.updated_at).toLocaleString("en-GB")}</td><td className="px-5 py-4"><Link href={`/admin/screenings/${participant?.id}`} className="text-xs font-bold text-[var(--bua-red)] hover:underline">Open</Link></td></tr>})}</tbody></table></div>:<EmptyState icon={ClipboardCheck} title="No screening records" description="Records will appear after authorised medical staff save the first screening."/>}</Card></PortalShell>;}

@@ -1,87 +1,19 @@
-"use client";
-
 import Link from "next/link";
-import { useState } from "react";
-import {
-  ArrowLeft,
-  CalendarDays,
-  CheckCircle2,
-  ClipboardCheck,
-  Clock3,
-  Edit3,
-  HeartPulse,
-  Mail,
-  MapPin,
-  Phone,
-  Send,
-  ShieldCheck,
-  Stethoscope,
-} from "lucide-react";
-import { toast } from "sonner";
-import { PortalShell } from "@/components/portal-shell";
+import { Activity, ArrowLeft, BriefcaseBusiness, HeartPulse, Mail, Phone, ShieldCheck, Stethoscope, UserRound } from "lucide-react";
 import { StatusBadge } from "@/components/portal-widgets";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { participants } from "@/lib/mock-data";
+import { ResultNotificationButton } from "@/components/result-notification-button";
 
-function InfoRow({ label, value }: { label: string; value: React.ReactNode }) {
-  return <div className="grid gap-1 py-3 sm:grid-cols-[150px_1fr] sm:gap-5"><dt className="text-xs font-bold uppercase tracking-[0.08em] text-[#71868c]">{label}</dt><dd className="text-sm font-semibold leading-6 text-[#294750]">{value || "—"}</dd></div>;
-}
+function Row({ label, value }: { label: string; value: React.ReactNode }) { return <div className="grid gap-1 border-b border-[#ece8e0] py-3.5 last:border-0 sm:grid-cols-[180px_1fr]"><p className="text-[10px] font-black uppercase tracking-[.1em] text-[#858b94]">{label}</p><div className="text-sm font-semibold leading-6 text-[#343a43]">{value || "—"}</div></div>; }
+function Section({ icon: Icon, title, children }: { icon: typeof UserRound; title: string; children: React.ReactNode }) { return <Card className="overflow-hidden shadow-sm"><div className="flex items-center gap-3 border-b border-[#e8e3db] px-5 py-4"><div className="grid size-9 place-items-center rounded-xl bg-[#eaf1fb] text-[var(--zendale-blue)]"><Icon className="size-4.5"/></div><h2 className="font-bold text-[#242930]">{title}</h2></div><div className="px-5">{children}</div></Card>; }
 
-export function ParticipantProfile({ mode, id }: { mode: "staff" | "admin"; id: string }) {
-  const participant = participants.find((item) => item.id === id) ?? participants[0];
-  const [notified, setNotified] = useState(false);
-  const screeningHref = `/${mode}/screenings/${participant.id}`;
-  const actionLabel = participant.status === "Not Started" ? "Start screening" : participant.status === "In Progress" ? "Continue screening" : "View screening";
-  const actionIcon = participant.status === "Not Started" ? Stethoscope : participant.status === "In Progress" ? ClipboardCheck : CheckCircle2;
-  const ActionIcon = actionIcon;
-
-  return (
-    <PortalShell
-      mode={mode}
-      title={participant.name}
-      description={`${participant.reg} · ${participant.department}`}
-      action={<div className="flex flex-wrap gap-2"><Button asChild variant="outline"><Link href={`/${mode}/participants`}><ArrowLeft /> Participant list</Link></Button><Button asChild><Link href={screeningHref}><ActionIcon /> {actionLabel}</Link></Button></div>}
-    >
-      <div className="grid gap-6 xl:grid-cols-[1.25fr_.75fr]">
-        <div className="space-y-6">
-          <Card className="overflow-hidden border-white shadow-sm">
-            <div className="flex flex-col gap-4 border-b border-[#e0e9e7] bg-[#fbfdfc] p-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-4"><div className="grid size-14 place-items-center rounded-2xl bg-[#e1f4ef] text-base font-black text-[var(--primary)]">{participant.initials}</div><div><div className="flex flex-wrap items-center gap-2"><h2 className="text-lg font-bold tracking-[-0.02em] text-[var(--navy)]">Registration information</h2><Badge>Confirmed</Badge></div><p className="mt-1 text-xs text-[#71868c]">Registered 17 July 2026 · 9:32 AM</p></div></div>
-              <Button variant="ghost" size="sm"><Edit3 /> Correct registration</Button>
-            </div>
-            <dl className="divide-y divide-[#e3ebe9] px-5 sm:px-6"><InfoRow label="Full name" value={participant.name} /><InfoRow label="Gender / Age" value="Male · 38 years" /><InfoRow label="Phone" value={<span className="inline-flex items-center gap-2"><Phone className="size-4 text-[var(--primary)]" /> {participant.phone}</span>} /><InfoRow label="Email" value={<span className="inline-flex items-center gap-2"><Mail className="size-4 text-[var(--primary)]" /> {participant.email}</span>} /><InfoRow label="Department" value={participant.department} /><InfoRow label="Requested service" value={participant.service} /></dl>
-          </Card>
-
-          <Card className="overflow-hidden border-white shadow-sm">
-            <div className="flex items-center gap-3 border-b border-[#e0e9e7] p-5"><div className="grid size-10 place-items-center rounded-xl bg-[#e8f5f1] text-[var(--primary)]"><HeartPulse className="size-5" /></div><div><h2 className="font-bold text-[var(--navy)]">Self-reported health information</h2><p className="mt-1 text-xs text-[#71868c]">Submitted during participant registration</p></div></div>
-            <dl className="divide-y divide-[#e3ebe9] px-5 sm:px-6"><InfoRow label="Known conditions" value="Hypertension" /><InfoRow label="Medication" value="Amlodipine 5 mg, once daily" /><InfoRow label="Smoking" value="No" /><InfoRow label="Alcohol" value="Occasionally" /><InfoRow label="Health concern" value="Occasional headaches after long work shifts." /></dl>
-          </Card>
-
-          <Card className="overflow-hidden border-white shadow-sm">
-            <div className="flex items-center justify-between gap-3 border-b border-[#e0e9e7] p-5"><div><h2 className="font-bold text-[var(--navy)]">Permissions & consent</h2><p className="mt-1 text-xs text-[#71868c]">Consent choices are stored separately.</p></div><ShieldCheck className="size-5 text-[var(--primary)]" /></div>
-            <div className="grid gap-3 p-5 sm:grid-cols-2"><div className="rounded-xl border border-[#d7e6e2] bg-[#f7fbfa] p-4"><p className="text-xs font-bold uppercase tracking-[0.08em] text-[#71868c]">Medical follow-up contact</p><p className="mt-2 font-bold text-[#1c5d57]">Yes — permission granted</p></div><div className="rounded-xl border border-[#d7e6e2] bg-[#f7fbfa] p-4"><p className="text-xs font-bold uppercase tracking-[0.08em] text-[#71868c]">Future wellness information</p><p className="mt-2 font-bold text-[#50656b]">No — not subscribed</p></div></div>
-          </Card>
-        </div>
-
-        <div className="space-y-6">
-          <Card className="overflow-hidden border-white shadow-sm">
-            <div className="bg-[var(--navy)] p-5 text-white"><div className="flex items-start justify-between gap-3"><div><p className="text-xs font-bold uppercase tracking-[0.1em] text-[#76d4c6]">Screening status</p><div className="mt-3"><StatusBadge status={participant.status} /></div></div><Stethoscope className="size-7 text-[#74d6c7]" /></div></div>
-            <div className="p-5"><div className="space-y-3 text-sm"><div className="flex items-center justify-between"><span className="text-[#71868c]">Last activity</span><span className="font-semibold text-[#294750]">{participant.lastActivity}</span></div><div className="flex items-center justify-between"><span className="text-[#71868c]">Completed by</span><span className="font-semibold text-[#294750]">Dr. Ada Mensah</span></div><div className="flex items-center justify-between"><span className="text-[#71868c]">Completed on</span><span className="font-semibold text-[#294750]">17 Jul, 10:42 AM</span></div></div><Separator className="my-5" /><Button asChild className="w-full"><Link href={screeningHref}><ActionIcon /> {actionLabel}</Link></Button>{["Completed", "Updated"].includes(participant.status) && <Button asChild variant="outline" className="mt-3 w-full"><Link href={`${screeningHref}?mode=edit`}><Edit3 /> Edit screening</Link></Button>}</div>
-          </Card>
-
-          {participant.referral && <Card className="border-[#eddcc0] bg-[#fffaf2] p-5 shadow-sm"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#fae9cb] text-[#94641a]"><MapPin className="size-5" /></div><div><div className="flex flex-wrap items-center gap-2"><h3 className="font-bold text-[var(--navy)]">Referral required</h3><Badge variant="warning">Within 7 days</Badge></div><p className="mt-2 text-sm font-semibold text-[#4f5f62]">Zendale Medical Centre</p><p className="mt-1 text-sm leading-6 text-[#6d7f83]">General Medicine · Participant informed</p></div></div></Card>}
-
-          {participant.followUp && <Card className="border-[#d7e6e2] p-5 shadow-sm"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e8f5f1] text-[var(--primary)]"><CalendarDays className="size-5" /></div><div><h3 className="font-bold text-[var(--navy)]">Follow-up required</h3><p className="mt-2 text-sm font-semibold text-[#4e676e]">Suggested: 24 July 2026</p><p className="mt-1 text-sm leading-6 text-[#6d7f83]">Repeat blood-pressure check.</p></div></div></Card>}
-
-          {["Completed", "Updated"].includes(participant.status) && <Card className="border-white p-5 shadow-sm"><div className="flex items-start gap-3"><div className="grid size-10 shrink-0 place-items-center rounded-xl bg-[#e8f1fb] text-[#356f9f]"><Send className="size-5" /></div><div className="flex-1"><h3 className="font-bold text-[var(--navy)]">Result notification</h3><p className="mt-1 text-sm leading-6 text-[#6c8187]">Send a secure result-ready notice without medical details.</p><Button className="mt-4 w-full" variant={notified ? "secondary" : "default"} disabled={notified || participant.email === "—"} onClick={() => { setNotified(true); toast.success("Result notification queued successfully."); }}>{notified ? <><CheckCircle2 /> Notification queued</> : <><Send /> Send result notification</>}</Button></div></div></Card>}
-
-          <Alert><Clock3 className="absolute left-4 top-4 size-5 text-[var(--primary)]" /><AlertTitle className="pl-7">Audit protection</AlertTitle><AlertDescription className="pl-7">Completed records open read-only. Corrections use a separate edit action and preserve original completion metadata.</AlertDescription></Alert>
-        </div>
-      </div>
-    </PortalShell>
-  );
+export function ParticipantProfile({ mode, participant }: { mode: "staff" | "admin"; participant: any }) {
+  const screening = Array.isArray(participant.screenings) ? participant.screenings[0] : participant.screenings;
+  const status = screening?.status || "not started";
+  const actionLabel = !screening ? "Start screening" : screening.status === "in_progress" ? "Continue screening" : "View screening";
+  const actionHref = `/${mode}/screenings/${participant.id}`;
+  return <div><div className="mb-5 flex flex-wrap items-center justify-between gap-3"><Button asChild variant="ghost" size="sm" className="-ml-3"><Link href={`/${mode}/participants`}><ArrowLeft/> Back to participants</Link></Button><div className="flex flex-wrap items-center gap-2"><Button asChild><Link href={actionHref}><Stethoscope/> {actionLabel}</Link></Button>{participant.email && ["completed","updated"].includes(screening?.status) && <ResultNotificationButton participantId={participant.id} updated={screening.status === "updated"}/>}</div></div><Card className="mb-6 overflow-hidden border-0 bg-[#17243a] p-6 text-white shadow-lg sm:p-8"><div className="flex flex-col justify-between gap-6 sm:flex-row sm:items-center"><div><div className="flex flex-wrap items-center gap-2"><Badge className="border-white/10 bg-white/10 text-white">{participant.registration_number}</Badge><StatusBadge status={status}/></div><h1 className="mt-4 text-3xl font-black tracking-[-.045em]">{participant.full_name}</h1><p className="mt-2 text-sm text-white/58">Registered {new Date(participant.created_at).toLocaleString("en-GB", { dateStyle: "long", timeStyle: "short" })}</p></div><div className="grid gap-2 text-sm sm:text-right"><span className="inline-flex items-center gap-2 sm:justify-end"><Phone className="size-4 text-[#84b8e7]"/>{participant.phone}</span><span className="inline-flex items-center gap-2 sm:justify-end"><Mail className="size-4 text-[#84b8e7]"/>{participant.email || "No email provided"}</span></div></div></Card><div className="grid gap-6 xl:grid-cols-2"><Section icon={UserRound} title="Personal and contact information"><Row label="Full name" value={participant.full_name}/><Row label="Gender" value={participant.gender}/><Row label="Age" value={participant.age}/><Row label="Phone" value={participant.phone}/><Row label="Email" value={participant.email || "Not provided"}/></Section><Section icon={BriefcaseBusiness} title="Employment information"><Row label="Department" value={participant.department === "Others" ? participant.other_department : participant.department}/><Row label="Requested service" value={participant.requested_service}/><Row label="Medical contact permission" value={participant.medical_contact_permission ? "Yes" : "No"}/><Row label="Wellness information" value={participant.wellness_information_permission ? "Yes" : "No"}/></Section><Section icon={HeartPulse} title="Self-reported health information"><Row label="Known conditions" value={(participant.medical_conditions || []).length ? participant.medical_conditions.join(", ") : "None selected"}/><Row label="Other condition" value={participant.other_condition}/><Row label="Taking medication" value={participant.taking_medication ? "Yes" : "No"}/><Row label="Medication details" value={participant.medication_details}/><Row label="Smoking status" value={participant.smoking_status}/><Row label="Alcohol use" value={participant.alcohol_use}/><Row label="Health concern" value={participant.health_concern}/></Section><Section icon={Activity} title="Screening workflow"><Row label="Status" value={<StatusBadge status={status}/>}/><Row label="Last saved" value={screening?.updated_at ? new Date(screening.updated_at).toLocaleString("en-GB") : "Not started"}/><Row label="Completed" value={screening?.completed_at ? new Date(screening.completed_at).toLocaleString("en-GB") : "—"}/><Row label="Updated after completion" value={screening?.updated_after_completion_at ? new Date(screening.updated_after_completion_at).toLocaleString("en-GB") : "—"}/><div className="py-4"><Button asChild className="w-full"><Link href={actionHref}><Stethoscope/> {actionLabel}</Link></Button></div></Section></div><Alert className="mt-6"><ShieldCheck className="absolute left-4 top-4 size-5 text-[var(--zendale-blue)]"/><AlertTitle className="pl-7">Audit protection</AlertTitle><AlertDescription className="pl-7">Completed records open read-only. Corrections use a separate update action and preserve original completion metadata.</AlertDescription></Alert></div>;
 }

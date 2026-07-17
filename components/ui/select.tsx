@@ -9,7 +9,7 @@ const SelectGroup = SelectPrimitive.Group;
 const SelectValue = SelectPrimitive.Value;
 const SelectTrigger = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Trigger>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>>(
   ({ className, children, ...props }, ref) => (
-    <SelectPrimitive.Trigger ref={ref} className={cn("flex h-12 w-full items-center justify-between rounded-xl border border-[var(--input)] bg-white px-4 py-2 text-[15px] shadow-sm transition data-[placeholder]:text-[#8ba0a6] hover:border-[#b6d1cc] focus:border-[var(--ring)] focus:outline-none focus:ring-4 focus:ring-[rgba(22,141,133,.12)] disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1", className)} {...props}>
+    <SelectPrimitive.Trigger ref={ref} className={cn("flex h-12 w-full items-center justify-between rounded-xl border border-[var(--input)] bg-white px-4 py-2 text-[15px] shadow-sm transition data-[placeholder]:text-[#858b95] hover:border-[#aeb9c8] focus:border-[var(--ring)] focus:outline-none focus:ring-4 focus:ring-[rgba(34,95,157,.13)] disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1", className)} {...props}>
       {children}<SelectPrimitive.Icon asChild><ChevronDown className="size-4 opacity-60" /></SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   ),
@@ -31,7 +31,7 @@ const SelectContent = React.forwardRef<React.ElementRef<typeof SelectPrimitive.C
 SelectContent.displayName = SelectPrimitive.Content.displayName;
 const SelectItem = React.forwardRef<React.ElementRef<typeof SelectPrimitive.Item>, React.ComponentPropsWithoutRef<typeof SelectPrimitive.Item>>(
   ({ className, children, ...props }, ref) => (
-    <SelectPrimitive.Item ref={ref} className={cn("relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 pl-8 pr-3 text-sm outline-none focus:bg-[#edf7f5] data-[disabled]:pointer-events-none data-[disabled]:opacity-50", className)} {...props}>
+    <SelectPrimitive.Item ref={ref} className={cn("relative flex w-full cursor-default select-none items-center rounded-lg py-2.5 pl-8 pr-3 text-sm outline-none focus:bg-[#f3f6fa] data-[disabled]:pointer-events-none data-[disabled]:opacity-50", className)} {...props}>
       <span className="absolute left-2 flex size-4 items-center justify-center"><SelectPrimitive.ItemIndicator><Check className="size-4" /></SelectPrimitive.ItemIndicator></span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
     </SelectPrimitive.Item>

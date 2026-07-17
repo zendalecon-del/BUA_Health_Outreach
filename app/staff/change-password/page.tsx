@@ -1,2 +1,4 @@
+import { requirePortalProfile } from "@/lib/auth";
 import { ChangePasswordPage } from "@/components/change-password-page";
-export default function Page() { return <ChangePasswordPage mode="staff" />; }
+export const dynamic="force-dynamic";
+export default async function Page(){const profile=await requirePortalProfile("staff");return <ChangePasswordPage mode="staff" profile={profile}/>;}
