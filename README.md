@@ -2,6 +2,11 @@
 
 A production-oriented Next.js 16 application for participant registration, secure result lookup, staff screening, referral/follow-up operations, staff administration, transactional email and Excel export.
 
+
+## Version 2.1 visual approval build
+
+The registration opening page, complete registration shell and staff dashboard have been structurally rebuilt. See `DESIGN_APPROVAL_BUILD.md` for the exact scope and changed files. Remaining routes are intentionally held until this direction is approved.
+
 ## What changed in Version 2
 
 - Complete visual redesign using the supplied official BUA and Zendale assets.

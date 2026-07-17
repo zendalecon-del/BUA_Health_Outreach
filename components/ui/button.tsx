@@ -4,23 +4,23 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 
 const buttonVariants = cva(
-  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:translate-y-px",
+  "inline-flex shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-[11px] text-sm font-bold transition-[background-color,border-color,color,transform,box-shadow] duration-200 disabled:pointer-events-none disabled:opacity-45 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:translate-y-px",
   {
     variants: {
       variant: {
-        default: "bg-[var(--bua-red)] text-white shadow-[0_10px_28px_rgba(180,22,43,.22)] hover:bg-[var(--bua-red-dark)]",
+        default: "bg-[var(--bua-red)] text-white shadow-[0_12px_30px_rgba(181,18,43,.20)] hover:bg-[var(--bua-red-dark)] hover:shadow-[0_14px_34px_rgba(181,18,43,.26)]",
         destructive: "bg-[var(--destructive)] text-white hover:bg-[#8f1b13]",
-        outline: "border border-[#d8d4cb] bg-white text-[#20242b] shadow-sm hover:border-[#aeb9c8] hover:bg-[#faf9f6]",
-        secondary: "bg-[#eaf1fb] text-[#174a86] hover:bg-[#dce9f8]",
-        ghost: "text-[#5d6470] hover:bg-[#eeece6] hover:text-[#1e232a]",
+        outline: "border border-[#cbc7bf] bg-white text-[#1d2731] hover:border-[#8f9baa] hover:bg-[#f8f7f3]",
+        secondary: "bg-[#e7eff8] text-[#174a86] hover:bg-[#dae8f6]",
+        ghost: "text-[#5c6671] hover:bg-[#eae7e1] hover:text-[#17202a]",
         link: "text-[var(--bua-red)] underline-offset-4 hover:underline",
-        dark: "bg-[#17243a] text-white shadow-[0_10px_28px_rgba(23,36,58,.2)] hover:bg-[#101b2d]",
-        blue: "bg-[var(--zendale-blue)] text-white shadow-[0_10px_28px_rgba(34,95,157,.22)] hover:bg-[var(--zendale-blue-dark)]"
+        dark: "bg-[#0f2744] text-white shadow-[0_12px_30px_rgba(9,26,46,.20)] hover:bg-[#091a2e]",
+        blue: "bg-[var(--zendale-blue)] text-white shadow-[0_12px_30px_rgba(42,103,165,.20)] hover:bg-[var(--zendale-blue-dark)]"
       },
       size: {
         default: "h-11 px-5 py-2",
-        sm: "h-9 rounded-lg px-3.5",
-        lg: "h-13 rounded-[14px] px-6 text-[15px]",
+        sm: "h-9 rounded-[9px] px-3.5",
+        lg: "h-13 rounded-xl px-6 text-[15px]",
         icon: "size-11"
       }
     },
