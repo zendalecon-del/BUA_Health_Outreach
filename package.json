@@ -1,6 +1,6 @@
 {
   "name": "bua-health-outreach-system",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "packageManager": "npm@10.9.2",
   "engines": {
