@@ -26,3 +26,9 @@ pnpm-debug.log*
 
 # generated previews
 /screenshots/
+
+# temporary deployment packages and extracted folders
+/BUA_Health_Outreach_Production_Rebuild/
+/BUA_Health_Outreach_v2_6_1/
+/BUA_Health_Outreach_v2_6_2/
+/BUA_Health_Outreach_Premium_System_v*.zip

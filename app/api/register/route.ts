@@ -49,7 +49,7 @@ export async function GET() {
 
   try {
     const db = createAdminClient();
-    const participantCheck = await db.from("participants").select("id", { count: "exact", head: true });
+    const participantCheck = await db.from("participants").select("id,requested_services,vaccine_interest", { count: "exact", head: true });
     if (participantCheck.error) throw participantCheck.error;
 
     const rateLimitCheck = await db.from("rate_limit_events").select("id", { count: "exact", head: true });
@@ -112,7 +112,9 @@ export async function POST(request: Request) {
       smoking_status: input.smoking,
       alcohol_use: input.alcohol,
       health_concern: input.healthConcern || null,
-      requested_service: input.requestedService,
+      requested_service: input.requestedServices.join("; "),
+      requested_services: input.requestedServices,
+      vaccine_interest: input.vaccineInterest,
       medical_contact_permission: input.medicalContact === "Yes",
       wellness_information_permission: input.wellnessInfo === "Yes",
       consent_accepted: true,

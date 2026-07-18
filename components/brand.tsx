@@ -23,6 +23,22 @@ export function BuaMark({ compact = false, inverse = false, className }: { compa
   );
 }
 
+export function ZendaleMark({ inverse = false, compact = false, className }: { inverse?: boolean; compact?: boolean; className?: string }) {
+  return (
+    <Link href="/zendale" aria-label="Zendale Limited home" className={cn("inline-flex items-center gap-3", className)}>
+      <span className={cn("flex size-10 items-center justify-center rounded-xl", inverse ? "bg-white/10" : "bg-[#eef4fa]")}>
+        <Image src="/brand/zendale-logo.png" alt="Zendale Limited" width={28} height={30} className="h-6 w-auto object-contain" priority />
+      </span>
+      {!compact && (
+        <span className="leading-none">
+          <span className={cn("block text-[15px] font-black tracking-[-.025em]", inverse ? "text-white" : "text-[#102d4a]")}>Zendale Limited</span>
+          <span className={cn("mt-1.5 block text-[8px] font-black uppercase tracking-[.22em]", inverse ? "text-white/50" : "text-[#6b7b8d]")}>Integrated Healthcare Solutions</span>
+        </span>
+      )}
+    </Link>
+  );
+}
+
 export function PoweredBy({ inverse = false, compact = false }: { inverse?: boolean; compact?: boolean }) {
   return (
     <div className={cn("flex items-center gap-2.5 text-[11px]", inverse ? "text-white/48" : "text-[#6b7480]") }>

@@ -23,6 +23,19 @@ export async function sendRegistrationEmail(input: { to: string; firstName: stri
   return { status: "sent" as const, id: result.data?.id };
 }
 
+export async function sendLookupCodeResetEmail(input: { to: string; firstName: string; registrationNumber: string; lookupCode: string }) {
+  const resend = client();
+  if (!resend) return { status: "not_configured" as const };
+  const result = await resend.emails.send({
+    from: process.env.EMAIL_FROM || "BUA Health Outreach <no-reply@example.com>",
+    to: input.to,
+    subject: `Your new BUA Health Outreach lookup code: ${input.registrationNumber}`,
+    html: shell("New private lookup code", `<p>Hello ${input.firstName},</p><p>An authorised administrator issued a new private lookup code for your registration. Your previous lookup code no longer works.</p><div style="background:#f7f5f0;border-radius:14px;padding:18px;margin:22px 0"><p style="margin:0 0 8px"><strong>Registration number:</strong> ${input.registrationNumber}</p><p style="margin:0"><strong>New private lookup code:</strong> ${input.lookupCode}</p></div><p>Keep this code confidential. Use it together with your registration number on the secure lookup page.</p><p><a href="${appUrl()}/lookup" style="display:inline-block;background:#225f9d;color:#fff;text-decoration:none;border-radius:10px;padding:12px 18px;font-weight:bold">Open secure lookup</a></p>`),
+  });
+  if (result.error) throw new Error(result.error.message);
+  return { status: "sent" as const, id: result.data?.id };
+}
+
 export async function sendStaffCredentialsEmail(input: { to: string; name: string; staffId: string; password: string; role: string }) {
   const resend = client();
   if (!resend) return { status: "not_configured" as const };

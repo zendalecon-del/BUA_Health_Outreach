@@ -23,7 +23,7 @@ export async function getDashboardSnapshot(): Promise<DashboardSnapshot> {
 export async function getParticipants(limit = 100) {
   const db = createAdminClient();
   const { data, error } = await db.from("participants")
-    .select("id, registration_number, full_name, department, requested_service, created_at, phone, email, screenings(id,status,updated_at,completed_at)")
+    .select("id, registration_number, full_name, department, requested_service, requested_services, vaccine_interest, created_at, phone, email, screenings(id,status,updated_at,completed_at)")
     .order("created_at", { ascending: false }).limit(limit);
   if (error) throw error;
   return data ?? [];

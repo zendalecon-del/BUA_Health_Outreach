@@ -12,5 +12,5 @@ export default defineConfig([
       "@typescript-eslint/no-unused-vars": ["warn", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }]
     }
   },
-  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts"]),
+  globalIgnores([".next/**", "out/**", "build/**", "next-env.d.ts", "BUA_Health_Outreach_Production_Rebuild/**", "BUA_Health_Outreach_v2_6_1/**", "BUA_Health_Outreach_v2_6_2/**"]),
 ]);

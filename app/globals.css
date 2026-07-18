@@ -80,3 +80,35 @@ button, a { -webkit-tap-highlight-color: transparent; }
 }
 
 .font-serif { font-family: Georgia, "Times New Roman", ui-serif, serif; }
+
+/* Premium first-screen composition: keeps the full outreach story within the
+   opening viewport on ordinary laptop and desktop displays without relying on zoom. */
+@media (min-width: 1024px) {
+  .outreach-hero-grid {
+    min-height: calc(100svh - 72px);
+    max-height: 920px;
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 800px) {
+  .outreach-hero-copy {
+    padding-top: 1.25rem;
+    padding-bottom: 1.25rem;
+  }
+
+  .outreach-hero-title {
+    margin-top: 1rem;
+    font-size: clamp(2.75rem, 4.25vw, 4.6rem);
+    line-height: .92;
+  }
+
+  .outreach-hero-image {
+    min-height: calc(100svh - 72px);
+  }
+}
+
+@media (min-width: 1024px) and (max-height: 700px) {
+  .outreach-hero-title {
+    font-size: clamp(2.45rem, 3.8vw, 4rem);
+  }
+}

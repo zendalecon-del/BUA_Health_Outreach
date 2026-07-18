@@ -39,7 +39,7 @@ export function ScreeningForm({ mode, profile, participant, hospitals }: Props) 
   const [step, setStep] = useState(0);
   const [saving, setSaving] = useState(false);
   const [data, setData] = useState({
-    screeningPackage: existing?.screening_package || participant.requested_service || "Free Wellness Screening",
+    screeningPackage: existing?.screening_package || (participant.requested_services?.[0] || participant.requested_service || "Free Wellness Screening"),
     systolic: existing?.systolic?.toString() || "", diastolic: existing?.diastolic?.toString() || "", randomBloodSugar: existing?.random_blood_sugar?.toString() || "",
     screeningDate: existing?.screening_date || new Date().toISOString().slice(0,10), doctorSeen: existing?.doctor_seen === true ? "Yes" : existing?.doctor_seen === false ? "No" : "",
     clinicalNote: existing?.clinical_note || "", referralRequired: existing?.referral_required ? "Yes" : "No", followUpRequired: existing?.follow_up_required ? "Yes" : "No",

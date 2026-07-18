@@ -1,310 +1,331 @@
 import Image from "next/image";
 import Link from "next/link";
 import {
-  ArrowRight,
-  Building2,
-  Check,
-  ChevronRight,
-  HeartPulse,
-  Hospital,
-  Landmark,
-  MapPin,
-  Network,
-  Settings2,
-  ShieldCheck,
-  Stethoscope,
-  UsersRound,
+  ArrowDown,
+  ArrowUpRight,
+  CircleCheck,
 } from "lucide-react";
+import { ZendaleMark } from "@/components/brand";
 
 const capabilities = [
   {
     number: "01",
-    icon: Stethoscope,
     title: "Clinical & specialist healthcare",
-    intro: "Coordinated care across primary, specialist and advanced clinical services.",
-    items: ["General medical services", "Specialist consultations", "Intensive care services", "Endoscopy", "Diagnostics", "Telemedicine", "Preventive healthcare"],
+    description: "Coordinated access to preventive, general, specialist and advanced clinical services.",
+    items: ["General medical services", "Specialist consultations", "Intensive care", "Endoscopy", "Diagnostics", "Telemedicine", "Preventive healthcare"],
   },
   {
     number: "02",
-    icon: HeartPulse,
     title: "Fertility & women’s health",
-    intro: "Personalised reproductive care delivered by specialist teams.",
-    items: ["Fertility assessment", "In-vitro fertilization", "Assisted reproductive services", "Reproductive health"],
+    description: "Personalised reproductive care supported by specialist expertise and modern treatment pathways.",
+    items: ["Fertility assessment", "IVF", "Assisted reproductive services", "Reproductive health"],
   },
   {
     number: "03",
-    icon: UsersRound,
     title: "Corporate healthcare",
-    intro: "Workforce-health programmes designed around organisational needs.",
-    items: ["Corporate retainership", "Pre-employment screening", "Annual medical check-ups", "Executive medicals", "Occupational health", "Workplace wellness", "Nationwide support"],
+    description: "Workforce-health programmes designed around organisational risk, access and continuity of care.",
+    items: ["Corporate retainership", "Pre-employment screening", "Annual medicals", "Executive medicals", "Occupational health", "Workplace wellness", "Nationwide support"],
   },
   {
     number: "04",
-    icon: Settings2,
     title: "Medical technology solutions",
-    intro: "End-to-end support across the medical-equipment lifecycle.",
-    items: ["Equipment procurement", "Installation", "Preventive maintenance", "Repairs", "Biomedical engineering support"],
+    description: "End-to-end support across the medical-equipment lifecycle.",
+    items: ["Procurement", "Installation", "Preventive maintenance", "Repairs", "Biomedical engineering support"],
   },
   {
     number: "05",
-    icon: Landmark,
     title: "Healthcare consulting",
-    intro: "Strategic and operational guidance for stronger health systems.",
-    items: ["Hospital planning & development", "Regulatory compliance", "Quality improvement", "Operational advisory", "PPP support"],
+    description: "Strategic and operational guidance for stronger institutions and more reliable health systems.",
+    items: ["Hospital planning", "Regulatory compliance", "Quality improvement", "Operational advisory", "PPP support"],
   },
   {
     number: "06",
-    icon: Network,
     title: "Hospital partnership & transformation",
-    intro: "Partnership models that improve capability, governance and outcomes.",
+    description: "Partnership models that strengthen capability, governance, service delivery and patient outcomes.",
     items: ["Strategic partnerships", "Management support", "Acquisitions", "Operational transformation"],
   },
 ] as const;
 
-const facilities = [
+const network = [
   {
+    number: "01",
     name: "Sky High Medical Centre",
-    location: "5B Adekunle Banjo Street, Magodo Phase II, Shangisha, Lagos",
     category: "Multi-specialist care",
-    description: "Comprehensive medical and surgical care, specialist clinics, diagnostics, corporate healthcare, retainership programmes and home care services.",
+    location: "Magodo Phase II, Lagos",
+    description: "Comprehensive medical and surgical care, specialist clinics, diagnostics, corporate healthcare and home-care support.",
+    href: "https://skyhighmedicalcentre.com/",
   },
   {
+    number: "02",
     name: "Sky High ICU Centre",
-    location: "Mainland Hospital, Yaba, Lagos",
     category: "Critical care",
-    description: "Advanced intensive care for patients requiring life support, specialist monitoring and intensive medical management.",
+    location: "Mainland Hospital, Yaba, Lagos",
+    description: "Advanced intensive care for patients requiring specialist monitoring, life support and intensive medical management.",
+    href: "https://skyhighmedicalcentre.com/sky-high-dialysis/",
   },
   {
+    number: "03",
     name: "Finnih Medical Centre",
-    location: "Ikeja GRA, Lagos",
     category: "Primary & specialist care",
-    description: "Accessible, patient-centred primary and specialist healthcare, preventive health, diagnostics and corporate healthcare.",
+    location: "Ikeja GRA, Lagos",
+    description: "Patient-centred primary and specialist healthcare, diagnostics, preventive health and corporate medical services.",
+    href: "https://finnihmedicalcentre.com/",
   },
   {
+    number: "04",
     name: "Lifecentre Medical Services",
-    location: "Ikeja GRA • Ketu • Alimosho • Nationwide",
-    category: "Corporate & occupational health",
-    description: "Diagnostics, occupational health, preventive care and corporate medical solutions through multiple facilities and a trusted nationwide partner network.",
+    category: "Diagnostics & occupational health",
+    location: "Ikeja GRA · Ketu · Alimosho · Nationwide support",
+    description: "Diagnostics, preventive care, occupational health and corporate medical solutions through a trusted partner network.",
+    href: "https://lifecentremedicals.com/",
   },
   {
+    number: "05",
     name: "Kindred Path Fertility Centre",
+    category: "Fertility & reproductive health",
     location: "LASUTH, Ikeja, Lagos",
-    category: "Fertility",
-    description: "Fertility assessment, IVF, reproductive health and personalised fertility care through a strategic public-private partnership.",
+    description: "Fertility assessment, IVF, assisted reproduction and personalised fertility care through a strategic public-private partnership.",
+    href: "https://www.ifmkindredpathfertilitycentre.com/",
   },
   {
+    number: "06",
     name: "Zendale Endoscopy Centre",
+    category: "Endoscopy & gastroenterology",
     location: "LASUTH, Ikeja, Lagos",
-    category: "Endoscopy",
-    description: "Advanced diagnostic and therapeutic gastrointestinal procedures delivered by experienced specialists and modern technology.",
+    description: "Diagnostic and therapeutic gastrointestinal procedures supported by specialist expertise and advanced endoscopic technology.",
+    href: "https://zendaleendoscopy.com/",
   },
   {
+    number: "07",
     name: "Lifecentre Med Support",
-    location: "LASUTH, Ikeja, Lagos",
     category: "Biomedical engineering",
+    location: "LASUTH, Ikeja, Lagos",
     description: "Medical-equipment procurement, installation, preventive maintenance, repairs, lifecycle management and technical support.",
+    href: "https://www.lifecentermedsupport.com/",
   },
   {
+    number: "08",
     name: "VHELAR Consulting",
-    location: "Lagos, Nigeria",
     category: "Healthcare consulting",
+    location: "Lagos, Nigeria",
     description: "Hospital planning, regulatory compliance, quality improvement, operational advisory and public-private partnership support.",
+    href: null,
   },
 ] as const;
 
 const reasons = [
-  "One trusted partner for complete healthcare solutions",
-  "Integrated network of specialist healthcare providers",
+  "One accountable partner across the healthcare journey",
+  "Specialist institutions connected through a coordinated network",
   "Corporate and occupational healthcare expertise",
-  "Advanced medical technology and specialist services",
-  "Healthcare consulting and hospital-development expertise",
-  "Nationwide coverage through a trusted partner network",
-  "Strategic public and private sector partnerships",
-  "Commitment to quality, innovation and patient-centred care",
-] as const;
+  "Medical technology, consulting and clinical capability in one system",
+  "Nationwide reach through trusted healthcare partnerships",
+  "A patient-centred commitment to quality, access and better outcomes",
+];
 
 export default function ZendalePage() {
   return (
-    <main className="min-h-screen bg-[#f6f3ed] text-[#0d2440]">
-      <header className="absolute inset-x-0 top-0 z-40 border-b border-white/15 bg-[#082544]/35 text-white backdrop-blur-xl">
-        <div className="mx-auto flex h-[78px] max-w-[1600px] items-center justify-between px-5 sm:px-8 xl:px-12">
-          <Link href="/zendale" className="flex items-center gap-3" aria-label="Zendale Limited home">
-            <Image src="/brand/zendale-logo.png" alt="Zendale Limited" width={46} height={48} className="h-10 w-auto rounded-md bg-white p-1 object-contain" priority />
-            <div>
-              <p className="text-sm font-black">Zendale Limited</p>
-              <p className="mt-1 text-[8px] font-bold uppercase tracking-[.19em] text-white/55">Integrated healthcare solutions</p>
-            </div>
-          </Link>
-          <nav className="flex items-center gap-2 text-xs font-extrabold" aria-label="Zendale navigation">
-            <a href="#capabilities" className="hidden rounded-full px-4 py-2 text-white/75 transition hover:text-white md:inline-flex">Capabilities</a>
-            <a href="#network" className="hidden rounded-full px-4 py-2 text-white/75 transition hover:text-white md:inline-flex">Network</a>
-            <Link href="/" className="rounded-full border border-white/20 bg-white/10 px-4 py-2.5 text-white transition hover:bg-white/15">BUA Outreach</Link>
+    <main className="min-h-screen bg-[#f3f6f8] text-[#102c49]">
+      <header className="sticky top-0 z-50 border-b border-[#d8e0e6] bg-[#f7fafc]/92 backdrop-blur-xl">
+        <div className="mx-auto flex h-[76px] max-w-[1560px] items-center justify-between px-5 sm:px-8 xl:px-12">
+          <ZendaleMark />
+          <nav className="hidden items-center gap-7 text-[11px] font-black text-[#53677b] lg:flex" aria-label="Zendale navigation">
+            <Link href="#about" className="transition hover:text-[#205f9b]">About</Link>
+            <Link href="#capabilities" className="transition hover:text-[#205f9b]">Capabilities</Link>
+            <Link href="#network" className="transition hover:text-[#205f9b]">Healthcare network</Link>
+            <Link href="#contact" className="transition hover:text-[#205f9b]">Partnerships</Link>
           </nav>
+          <Link href="#contact" className="inline-flex h-10 items-center gap-2 rounded-full bg-[#123f70] px-5 text-[11px] font-black text-white transition hover:bg-[#0b315c]">
+            Partner with Zendale <ArrowDown className="size-3.5" />
+          </Link>
         </div>
       </header>
 
-      <section className="relative isolate min-h-[100svh] overflow-hidden bg-[#071f3a] text-white">
-        <Image src="/outreach/outreach-3.webp" alt="Zendale healthcare team supporting participants" fill priority className="object-cover object-center opacity-45" sizes="100vw" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(5,25,48,.96)_0%,rgba(5,25,48,.86)_43%,rgba(5,25,48,.36)_100%)]" />
-        <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(255,255,255,.05)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.05)_1px,transparent_1px)] [background-size:72px_72px]" />
-        <div className="absolute -right-28 top-24 size-[420px] rounded-full border-[80px] border-white/[.035]" />
-
-        <div className="relative mx-auto flex min-h-[100svh] max-w-[1600px] flex-col justify-end px-5 pb-10 pt-32 sm:px-8 sm:pb-12 xl:px-12 xl:pb-14">
-          <div className="max-w-[980px]">
-            <div className="inline-flex items-center gap-3 rounded-full border border-white/20 bg-white/10 px-4 py-2 text-[9px] font-black uppercase tracking-[.19em] text-[#8bc5ef] backdrop-blur-xl">
-              <span className="size-1.5 rounded-full bg-[#8bc5ef]" />
-              Integrated healthcare solutions
+      <section className="relative overflow-hidden bg-[#071d34] text-white">
+        <div className="absolute inset-0 opacity-45 [background-image:linear-gradient(rgba(255,255,255,.055)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.055)_1px,transparent_1px)] [background-size:70px_70px]" />
+        <div className="relative mx-auto grid min-h-[720px] max-w-[1560px] lg:grid-cols-[.94fr_1.06fr]">
+          <div className="flex flex-col justify-between px-5 py-12 sm:px-8 sm:py-16 xl:px-12 xl:py-20">
+            <div className="max-w-[720px]">
+              <p className="text-[10px] font-black uppercase tracking-[.24em] text-[#8fc9ee]">Integrated healthcare solutions</p>
+              <h1 className="mt-6 text-balance text-[clamp(3.2rem,6vw,6.8rem)] font-black leading-[.86] tracking-[-.07em]">
+                One partner.
+                <span className="mt-2 block text-[#91c9ec]">Complete healthcare solutions.</span>
+              </h1>
+              <p className="mt-7 max-w-[650px] text-[16px] leading-8 text-white/67">
+                Zendale brings together specialist care, medical technology, corporate health, consulting expertise and strategic partnerships to solve healthcare needs through one coordinated system.
+              </p>
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+                <Link href="#network" className="inline-flex h-13 items-center justify-center gap-3 rounded-full bg-white px-6 text-sm font-black text-[#0d3157] transition hover:-translate-y-0.5">
+                  Explore our network <ArrowDown className="size-4" />
+                </Link>
+                <Link href="#capabilities" className="inline-flex h-13 items-center justify-center rounded-full border border-white/25 px-6 text-sm font-black text-white transition hover:bg-white/10">
+                  View capabilities
+                </Link>
+              </div>
             </div>
-            <h1 className="mt-7 text-balance font-serif text-[clamp(3.6rem,8vw,8.8rem)] font-bold leading-[.82] tracking-[-.075em]">
-              One partner.
-              <span className="mt-2 block text-[#8bc5ef]">Complete healthcare solutions.</span>
-            </h1>
-            <p className="mt-8 max-w-[760px] text-[15px] leading-8 text-white/70 sm:text-lg sm:leading-9">
-              Zendale connects specialist healthcare institutions, clinical expertise, medical technology, consulting capability and strategic partnerships to solve complex healthcare needs across Nigeria.
-            </p>
-            <div className="mt-9 flex flex-col gap-3 sm:flex-row">
-              <a href="#network" className="group inline-flex h-14 items-center justify-center gap-3 rounded-full bg-white px-7 text-sm font-black text-[#0a2b4f] transition hover:-translate-y-0.5">
-                Explore our network <ArrowRight className="size-4 transition group-hover:translate-x-1" />
-              </a>
-              <a href="#contact" className="inline-flex h-14 items-center justify-center rounded-full border border-white/24 bg-white/10 px-7 text-sm font-black text-white backdrop-blur transition hover:bg-white/15">Partner with Zendale</a>
+
+            <div className="mt-12 grid border-y border-white/15 sm:grid-cols-3">
+              {[
+                ["01", "Clinical care", "Preventive, specialist and intensive care"],
+                ["02", "Health systems", "Consulting, quality and transformation"],
+                ["03", "National reach", "Corporate support through trusted partners"],
+              ].map(([number, title, text], index) => (
+                <div key={number} className={`py-5 sm:px-5 ${index < 2 ? "border-b border-white/15 sm:border-b-0 sm:border-r" : ""}`}>
+                  <p className="text-[9px] font-black tracking-[.18em] text-[#7fc0e8]">{number}</p>
+                  <p className="mt-3 text-sm font-black">{title}</p>
+                  <p className="mt-1 text-[10px] leading-5 text-white/48">{text}</p>
+                </div>
+              ))}
             </div>
           </div>
 
-          <div className="mt-12 grid border-y border-white/15 lg:grid-cols-3">
-            {[
-              ["01", "Clinical care", "From preventive health to specialist and intensive care."],
-              ["02", "Health systems", "Consulting, quality improvement and operational transformation."],
-              ["03", "National reach", "Corporate-health support through a trusted partner network."],
-            ].map(([number, title, body], index) => (
-              <div key={number} className={`grid grid-cols-[38px_1fr] gap-3 py-4 lg:px-5 ${index < 2 ? "border-b border-white/15 lg:border-b-0 lg:border-r" : ""}`}>
-                <span className="pt-0.5 text-[9px] font-black tracking-[.2em] text-[#8bc5ef]">{number}</span>
-                <div><p className="text-xs font-black">{title}</p><p className="mt-1 text-[10px] leading-4 text-white/52">{body}</p></div>
+          <div className="relative min-h-[620px] border-t border-white/10 lg:min-h-0 lg:border-l lg:border-t-0">
+            <div className="absolute inset-0 grid grid-cols-2 grid-rows-2 gap-px bg-white/15">
+              <div className="relative row-span-2 overflow-hidden">
+                <Image src="/outreach/outreach-1.webp" alt="Zendale clinician discussing healthcare options with a participant" fill priority className="object-cover object-[52%_center]" sizes="(min-width:1024px) 34vw, 50vw" />
+              </div>
+              <div className="relative overflow-hidden">
+                <Image src="/outreach/outreach-3.webp" alt="Zendale team supporting a corporate health programme" fill className="object-cover object-center" sizes="(min-width:1024px) 24vw, 50vw" />
+              </div>
+              <div className="relative overflow-hidden">
+                <Image src="/outreach/outreach-4.webp" alt="Zendale healthcare professional conducting a screening" fill className="object-cover object-center" sizes="(min-width:1024px) 24vw, 50vw" />
+              </div>
+            </div>
+            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_45%,rgba(4,18,32,.78)_100%)]" />
+            <div className="absolute inset-x-6 bottom-6 border-l-2 border-[#8fc9ee] pl-4 text-white sm:inset-x-8 sm:bottom-8">
+              <p className="max-w-xl text-xl font-black leading-tight tracking-[-.035em] sm:text-2xl">Clinical care, operational expertise and strategic partnerships—connected around the need.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" className="scroll-mt-24 bg-white">
+        <div className="mx-auto grid max-w-[1560px] gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[.78fr_1.22fr] lg:px-12 lg:py-28">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#2870aa]">About Zendale</p>
+            <h2 className="mt-5 max-w-lg text-4xl font-black leading-[1] tracking-[-.055em] text-[#0f2d4a] sm:text-5xl">A connected healthcare company, not a single facility.</h2>
+          </div>
+          <div className="max-w-3xl">
+            <p className="text-xl font-bold leading-9 tracking-[-.025em] text-[#183d60] sm:text-2xl">
+              We coordinate institutions, specialists, technology and partnerships so individuals and organisations can reach the right healthcare solution through one accountable partner.
+            </p>
+            <div className="mt-8 grid gap-6 border-t border-[#dce4ea] pt-8 sm:grid-cols-2">
+              <p className="text-sm leading-7 text-[#607285]">Our model combines clinical excellence, healthcare innovation, operational expertise and strategic partnerships to improve access and outcomes across Nigeria.</p>
+              <p className="text-sm leading-7 text-[#607285]">From specialist medical care and fertility treatment to occupational health, medical equipment and hospital transformation, Zendale provides a coordinated route from need to solution.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="capabilities" className="scroll-mt-24 border-y border-[#d8e0e6] bg-[#eef3f6]">
+        <div className="mx-auto max-w-[1560px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+          <div className="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-end">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#2870aa]">What we deliver</p>
+              <h2 className="mt-5 text-4xl font-black leading-[1] tracking-[-.055em] text-[#0f2d4a] sm:text-5xl">Six capabilities. One accountable partner.</h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-7 text-[#607285] lg:justify-self-end">A coordinated portfolio spanning clinical care, workforce health, medical technology and healthcare-system development.</p>
+          </div>
+
+          <div className="mt-14 grid border-t border-[#cfd9e1] lg:grid-cols-2">
+            {capabilities.map((capability, index) => (
+              <article key={capability.number} className={`grid gap-5 border-b border-[#cfd9e1] py-8 sm:grid-cols-[54px_1fr] lg:px-8 ${index % 2 === 0 ? "lg:border-r lg:pl-0" : "lg:pr-0"}`}>
+                <span className="text-[10px] font-black tracking-[.18em] text-[#2c73aa]">{capability.number}</span>
+                <div>
+                  <h3 className="text-xl font-black tracking-[-.03em] text-[#163653]">{capability.title}</h3>
+                  <p className="mt-3 max-w-xl text-sm leading-6 text-[#657687]">{capability.description}</p>
+                  <div className="mt-5 flex flex-wrap gap-x-5 gap-y-2">
+                    {capability.items.map((item) => <span key={item} className="inline-flex items-center gap-2 text-[11px] font-bold text-[#35516d]"><span className="size-1 rounded-full bg-[#4a8abd]" />{item}</span>)}
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section id="network" className="scroll-mt-24 bg-[#071d34] text-white">
+        <div className="mx-auto max-w-[1560px] px-5 py-20 sm:px-8 lg:px-12 lg:py-28">
+          <div className="grid gap-8 lg:grid-cols-[.78fr_1.22fr] lg:items-end">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#8fc9ee]">The Zendale healthcare network</p>
+              <h2 className="mt-5 text-4xl font-black leading-[1] tracking-[-.055em] sm:text-5xl">Specialist institutions. One coordinated system.</h2>
+            </div>
+            <p className="max-w-2xl text-sm leading-7 text-white/55 lg:justify-self-end">Select a facility to visit its official website. VHELAR remains unlinked until an official public profile is confirmed.</p>
+          </div>
+
+          <div className="mt-14 border-t border-white/15">
+            {network.map((facility) => {
+              const content = (
+                <div className="group grid gap-4 border-b border-white/15 py-6 transition sm:grid-cols-[50px_1fr_160px_36px] sm:items-center lg:grid-cols-[60px_280px_1fr_220px_40px]">
+                  <span className="text-[9px] font-black tracking-[.18em] text-[#7bb9df]">{facility.number}</span>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-[.14em] text-white/42">{facility.category}</p>
+                    <h3 className="mt-2 text-lg font-black tracking-[-.025em] text-white transition group-hover:text-[#9fd3f2]">{facility.name}</h3>
+                  </div>
+                  <p className="text-xs leading-6 text-white/52">{facility.description}</p>
+                  <p className="text-[10px] font-bold leading-5 text-white/45">{facility.location}</p>
+                  <div className="flex size-9 items-center justify-center rounded-full border border-white/18 text-white/70 transition group-hover:border-[#8fc9ee] group-hover:bg-[#8fc9ee] group-hover:text-[#082541]">
+                    {facility.href ? <ArrowUpRight className="size-4" /> : <span className="text-[8px] font-black">—</span>}
+                  </div>
+                </div>
+              );
+              return facility.href ? (
+                <a key={facility.number} href={facility.href} target="_blank" rel="noreferrer" aria-label={`Visit ${facility.name} website`} className="block">{content}</a>
+              ) : (
+                <div key={facility.number} title="Official public link not yet confirmed">{content}</div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white">
+        <div className="mx-auto grid max-w-[1560px] gap-12 px-5 py-20 sm:px-8 lg:grid-cols-[.84fr_1.16fr] lg:px-12 lg:py-28">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#2870aa]">Why Zendale</p>
+            <h2 className="mt-5 max-w-lg text-4xl font-black leading-[1] tracking-[-.055em] text-[#0f2d4a] sm:text-5xl">Built to solve the full healthcare journey.</h2>
+          </div>
+          <div className="grid border-y border-[#dbe3e9] sm:grid-cols-2">
+            {reasons.map((reason, index) => (
+              <div key={reason} className={`flex gap-3 border-b border-[#dbe3e9] py-5 sm:px-5 ${index % 2 === 0 ? "sm:border-r sm:pl-0" : "sm:pr-0"} ${index >= reasons.length - 2 ? "sm:border-b-0" : ""}`}>
+                <CircleCheck className="mt-0.5 size-4 shrink-0 text-[#2a79ad]" />
+                <p className="text-sm font-bold leading-6 text-[#294660]">{reason}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="bg-[#f6f3ed]">
-        <div className="mx-auto grid max-w-[1600px] gap-12 px-5 py-18 sm:px-8 lg:grid-cols-[.78fr_1.22fr] lg:px-12 lg:py-24">
+      <section id="contact" className="scroll-mt-24 bg-[#d9eafa]">
+        <div className="mx-auto grid max-w-[1560px] gap-10 px-5 py-20 sm:px-8 lg:grid-cols-[1.1fr_.9fr] lg:px-12 lg:py-24">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#21639e]">About Zendale</p>
-            <h2 className="mt-4 max-w-xl font-serif text-4xl font-bold leading-[1] tracking-[-.05em] sm:text-6xl">A connected healthcare company, not a single facility.</h2>
+            <p className="text-[10px] font-black uppercase tracking-[.22em] text-[#236ca4]">Let’s partner with you</p>
+            <h2 className="mt-5 max-w-3xl text-4xl font-black leading-[.98] tracking-[-.055em] text-[#0b2d4e] sm:text-6xl">Stronger healthcare systems. Healthier organisations. Healthier communities.</h2>
           </div>
-          <div className="grid gap-6 text-[14px] leading-7 text-[#59697b] md:grid-cols-2">
-            <p>Zendale Limited is an integrated healthcare solutions company committed to transforming healthcare delivery through quality clinical services, specialist care, healthcare consulting, medical technology and corporate health solutions.</p>
-            <p>Rather than operating as one hospital, Zendale brings together a network of specialist institutions and strategic partnerships for individuals, organisations, healthcare providers and government institutions.</p>
-            <p>Our model combines clinical excellence, healthcare innovation, operational expertise and strategic partnerships to improve healthcare access and outcomes across Nigeria.</p>
-            <p>Whether the need is specialist care, fertility treatment, occupational health, equipment support, consulting or nationwide corporate healthcare, Zendale provides one coordinated route to the right solution.</p>
-          </div>
-        </div>
-      </section>
-
-      <section id="capabilities" className="border-y border-[#d9d5ce] bg-white">
-        <div className="mx-auto max-w-[1600px] px-5 py-18 sm:px-8 lg:px-12 lg:py-24">
-          <div className="grid gap-8 lg:grid-cols-[.7fr_1.3fr] lg:items-end">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#21639e]">What we deliver</p>
-              <h2 className="mt-4 font-serif text-4xl font-bold tracking-[-.05em] sm:text-6xl">Six capabilities.<br />One accountable partner.</h2>
-            </div>
-            <p className="max-w-2xl text-sm leading-7 text-[#627184] lg:justify-self-end">A coordinated portfolio that supports clinical care, workforce health, medical technology and healthcare-system development.</p>
-          </div>
-
-          <div className="mt-12 grid gap-px overflow-hidden rounded-[26px] border border-[#dfe4e9] bg-[#dfe4e9] md:grid-cols-2 xl:grid-cols-3">
-            {capabilities.map(({ number, icon: Icon, title, intro, items }) => (
-              <article key={number} className="group bg-[#fbfcfd] p-6 transition hover:bg-[#f4f8fb] sm:p-7">
-                <div className="flex items-center justify-between">
-                  <span className="text-[9px] font-black tracking-[.2em] text-[#a60f27]">{number}</span>
-                  <div className="flex size-10 items-center justify-center rounded-xl bg-[#eaf2f8] text-[#1c609a]"><Icon className="size-5" /></div>
-                </div>
-                <h3 className="mt-7 text-lg font-black tracking-[-.025em] text-[#142c47]">{title}</h3>
-                <p className="mt-3 text-xs leading-5 text-[#6a7888]">{intro}</p>
-                <div className="mt-6 grid gap-2">
-                  {items.map((item) => <div key={item} className="flex items-start gap-2 text-[10px] leading-4 text-[#4f6073]"><Check className="mt-0.5 size-3.5 shrink-0 text-[#27835e]" />{item}</div>)}
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="network" className="bg-[#0a2849] text-white">
-        <div className="mx-auto max-w-[1600px] px-5 py-18 sm:px-8 lg:px-12 lg:py-24">
-          <div className="grid gap-8 lg:grid-cols-[.65fr_1.35fr] lg:items-end">
-            <div>
-              <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#8bc5ef]">The Zendale healthcare network</p>
-              <h2 className="mt-4 font-serif text-4xl font-bold leading-[1] tracking-[-.05em] sm:text-6xl">Specialist institutions.<br />One coordinated system.</h2>
-            </div>
-            <div className="max-w-2xl lg:justify-self-end">
-              <p className="text-sm leading-7 text-white/60">Clinical care, critical care, fertility, endoscopy, biomedical engineering and consulting connected through a single healthcare partner.</p>
-              <div className="mt-5 flex items-center gap-2 text-[10px] font-black uppercase tracking-[.14em] text-[#8bc5ef]"><MapPin className="size-4" /> Lagos base · Nationwide partner coverage</div>
-            </div>
-          </div>
-
-          <div className="mt-12 border-t border-white/15">
-            {facilities.map((facility, index) => (
-              <article key={facility.name} className="group grid gap-4 border-b border-white/15 py-6 transition hover:bg-white/[.035] sm:grid-cols-[52px_1fr] lg:grid-cols-[70px_260px_1fr_24px] lg:items-center lg:px-4">
-                <span className="text-[9px] font-black tracking-[.2em] text-[#f0c53a]">{String(index + 1).padStart(2, "0")}</span>
-                <div>
-                  <p className="text-[8px] font-black uppercase tracking-[.16em] text-[#8bc5ef]">{facility.category}</p>
-                  <h3 className="mt-2 text-lg font-black tracking-[-.02em]">{facility.name}</h3>
-                </div>
-                <div>
-                  <p className="flex items-start gap-2 text-[9px] font-bold uppercase tracking-[.08em] text-white/42"><MapPin className="mt-0.5 size-3 shrink-0" />{facility.location}</p>
-                  <p className="mt-2 max-w-2xl text-[11px] leading-5 text-white/58">{facility.description}</p>
-                </div>
-                <ChevronRight className="hidden size-4 text-white/25 transition group-hover:translate-x-1 group-hover:text-white/70 lg:block" />
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="bg-white">
-        <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-18 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:px-12 lg:py-24">
-          <div className="relative min-h-[520px] overflow-hidden rounded-[28px] bg-[#dbe7f0]">
-            <Image src="/outreach/outreach-1.webp" alt="Zendale health professional consulting with a participant" fill className="object-cover" sizes="(min-width:1024px) 52vw, 100vw" />
-            <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_40%,rgba(5,25,48,.78))]" />
-            <div className="absolute inset-x-6 bottom-6 rounded-2xl border border-white/20 bg-[#082746]/80 p-5 text-white backdrop-blur-xl">
-              <p className="text-[9px] font-black uppercase tracking-[.18em] text-[#8bc5ef]">Healthcare with purpose</p>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-white/74">We connect clinical care, operational expertise and strategic partnerships to build stronger healthcare systems and healthier communities.</p>
-            </div>
-          </div>
-          <div className="flex flex-col justify-center">
-            <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#21639e]">Why choose Zendale</p>
-            <h2 className="mt-4 font-serif text-4xl font-bold leading-[1] tracking-[-.05em] sm:text-6xl">Built to solve the full healthcare journey.</h2>
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
-              {reasons.map((reason) => <div key={reason} className="flex items-start gap-3 border-t border-[#dce2e7] pt-4 text-[11px] font-bold leading-5 text-[#40536a]"><ShieldCheck className="mt-0.5 size-4 shrink-0 text-[#27835e]" />{reason}</div>)}
+          <div className="border-l border-[#a9c8df] pl-6 lg:self-end">
+            <p className="text-sm leading-7 text-[#395a74]">Whether the need is specialist care, corporate healthcare, medical technology, consulting or a hospital partnership, Zendale has the expertise and network to support the next step.</p>
+            <div className="mt-6 grid gap-4 text-sm font-black text-[#103a62]">
+              <p>Phone: <span className="font-semibold text-[#58748b]">To be confirmed</span></p>
+              <p>Email: <span className="font-semibold text-[#58748b]">To be confirmed</span></p>
+              <p>Location: <span className="font-semibold text-[#58748b]">Lagos, Nigeria</span></p>
             </div>
           </div>
         </div>
       </section>
 
-      <section id="contact" className="bg-[#eaf1f6]">
-        <div className="mx-auto grid max-w-[1600px] gap-10 px-5 py-18 sm:px-8 lg:grid-cols-[1.15fr_.85fr] lg:items-end lg:px-12 lg:py-24">
+      <footer className="bg-[#06182a] text-white">
+        <div className="mx-auto flex max-w-[1560px] flex-col gap-8 px-5 py-10 sm:px-8 md:flex-row md:items-end md:justify-between xl:px-12">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[.2em] text-[#21639e]">Let’s partner with you</p>
-            <h2 className="mt-4 max-w-4xl font-serif text-4xl font-bold leading-[1] tracking-[-.05em] sm:text-6xl">Stronger healthcare systems. Healthier organisations. Healthier communities.</h2>
-            <p className="mt-6 max-w-2xl text-sm leading-7 text-[#5e6d7f]">Whether you need specialist care, corporate healthcare, medical equipment support, consulting or a hospital partnership, Zendale has the expertise and network to support your goals.</p>
+            <ZendaleMark inverse />
+            <p className="mt-5 max-w-sm text-xs leading-6 text-white/46">One Partner. Complete Healthcare Solutions.</p>
           </div>
-          <div className="rounded-[24px] bg-[#0a2849] p-6 text-white shadow-[0_24px_60px_rgba(10,40,73,.18)] sm:p-7">
-            <div className="flex items-center gap-3">
-              <Image src="/brand/zendale-logo.png" alt="Zendale Limited" width={46} height={48} className="h-10 w-auto rounded bg-white p-1 object-contain" />
-              <div><p className="text-sm font-black">Zendale Limited</p><p className="mt-1 text-[8px] font-bold uppercase tracking-[.17em] text-white/45">One Partner. Complete Healthcare Solutions.</p></div>
-            </div>
-            <div className="mt-6 grid gap-4 border-t border-white/12 pt-5 text-sm">
-              <div className="flex items-start gap-3"><MapPin className="mt-0.5 size-4 text-[#8bc5ef]" /><div><p className="font-black">Lagos, Nigeria</p><p className="mt-1 text-[10px] text-white/45">Corporate office</p></div></div>
-              <div className="flex items-start gap-3"><Building2 className="mt-0.5 size-4 text-[#8bc5ef]" /><div><p className="font-black">+234 XXX XXX XXXX</p><p className="mt-1 text-[10px] text-white/45">Phone placeholder</p></div></div>
-              <div className="flex items-start gap-3"><Hospital className="mt-0.5 size-4 text-[#8bc5ef]" /><div><p className="font-black">contact@placeholder.com</p><p className="mt-1 text-[10px] text-white/45">Email placeholder</p></div></div>
-            </div>
+          <div className="flex flex-wrap gap-x-6 gap-y-3 text-[11px] font-bold text-white/52">
+            <Link href="#about" className="hover:text-white">About</Link>
+            <Link href="#capabilities" className="hover:text-white">Capabilities</Link>
+            <Link href="#network" className="hover:text-white">Healthcare network</Link>
+            <Link href="#contact" className="hover:text-white">Partnerships</Link>
+            <span>© 2026 Zendale Limited</span>
           </div>
-        </div>
-      </section>
-
-      <footer className="bg-[#061a31] text-white">
-        <div className="mx-auto flex max-w-[1600px] flex-col justify-between gap-6 px-5 py-7 sm:px-8 md:flex-row md:items-center xl:px-12">
-          <div className="flex items-center gap-3"><Image src="/brand/zendale-logo.png" alt="Zendale Limited" width={40} height={42} className="h-8 w-auto rounded bg-white p-1 object-contain" /><div><p className="text-xs font-black">Zendale Limited</p><p className="mt-1 text-[7px] font-bold uppercase tracking-[.18em] text-white/38">One Partner. Complete Healthcare Solutions.</p></div></div>
-          <div className="flex flex-wrap gap-x-5 gap-y-2 text-xs font-bold text-white/48"><Link href="/" className="transition hover:text-white">BUA Health Outreach</Link><Link href="/lookup" className="transition hover:text-white">Participant lookup</Link><Link href="/staff/login" className="transition hover:text-white">Authorised personnel</Link></div>
         </div>
       </footer>
     </main>

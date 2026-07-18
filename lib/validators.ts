@@ -17,7 +17,8 @@ export const registrationSchema = z.object({
   smoking: z.enum(["Yes", "No", "Former smoker"]),
   alcohol: z.enum(["Yes", "Occasionally", "No"]),
   healthConcern: z.string().trim().max(1200).optional().default(""),
-  requestedService: z.enum(["Free Wellness Screening", "Standard Package", "Comprehensive Package", "Doctor Consultation Only"]),
+  requestedServices: z.array(z.enum(["Free Wellness Screening", "Standard Package", "Comprehensive Package", "Doctor Consultation Only"])).min(1).max(4),
+  vaccineInterest: z.array(z.enum(["HPV", "Hepatitis B", "Tetanus", "No, thank you"])).min(1).max(4),
   medicalContact: yesNo,
   wellnessInfo: yesNo,
   consent: z.literal(true),
@@ -26,6 +27,7 @@ export const registrationSchema = z.object({
   if (value.conditions.includes("Others") && value.otherCondition.length < 2) ctx.addIssue({ code: "custom", path: ["otherCondition"], message: "Please specify the condition." });
   if (value.medication === "Yes" && value.medicationDetails.length < 2) ctx.addIssue({ code: "custom", path: ["medicationDetails"], message: "Please add medication details." });
   if (value.conditions.includes("None") && value.conditions.length > 1) ctx.addIssue({ code: "custom", path: ["conditions"], message: "None cannot be selected with another condition." });
+  if (value.vaccineInterest.includes("No, thank you") && value.vaccineInterest.length > 1) ctx.addIssue({ code: "custom", path: ["vaccineInterest"], message: "No, thank you cannot be selected with another vaccine." });
 });
 
 export const lookupSchema = z.object({

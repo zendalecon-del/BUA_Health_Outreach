@@ -36,6 +36,9 @@
     ".next/dev/types/**/*.ts"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "BUA_Health_Outreach_Production_Rebuild/**",
+    "BUA_Health_Outreach_v2_6_1/**",
+    "BUA_Health_Outreach_v2_6_2/**"
   ]
 }
